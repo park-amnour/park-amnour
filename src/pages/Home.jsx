@@ -1,0 +1,339 @@
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import {
+  ArrowRight,
+  MapPin,
+  Clock,
+  Waves,
+  Camera,
+  Heart,
+  Star,
+  Tent,
+  Wind,
+  Compass,
+  ArrowUpRight,
+  Sparkles,
+  RefreshCw,
+  Play,
+  Navigation
+} from 'lucide-react';
+import { insforge } from '../lib/insforge';
+import { useLanguage } from '../context/LanguageContext';
+import { useSite } from '../context/SiteContext';
+import InfoStrip from '../components/InfoStrip';
+import AttractionCard from '../components/AttractionCard';
+import Skeleton, { CardSkeleton } from '../components/Skeleton';
+
+const getIcon = (id) => {
+  switch(id) {
+    case 'pokhra': return <Waves size={24} />;
+    case 'temple': return <Tent size={24} />;
+    case 'park': return <Wind size={24} />;
+    case 'boating': return <Waves size={24} />;
+    case 'kids': return <Sparkles size={24} />;
+    default: return <Navigation size={24} />;
+  }
+};
+
+const Home = () => {
+  const { lang } = useLanguage();
+  const { stats, isLoading: isSiteLoading } = useSite();
+  const [heroData, setHeroData] = useState({
+    titleEn: 'Amnour Park',
+    titleHi: 'अमनौर पार्क',
+    descEn: 'Experience the beauty of Amrit Sarovar.',
+    descHi: 'अमृत सरोवर की खूबसूरती का अनुभव करें।',
+    videoUrl: 'https://v1.covered.ai/covered-media/drone_park.mp4'
+  });
+  const [attractions, setAttractions] = useState([]);
+  const [pricing, setPricing] = useState({
+    dayEntry: 10,
+    eveningEntry: 25,
+    boating: 100,
+    parkingBike: 10,
+    parkingCycle: 5
+  });
+  const [reach, setReach] = useState({
+    timingsEn: '7:00 AM – 9:00 PM',
+    timingsHi: '7:00 AM – 9:00 PM',
+    locationEn: 'Amnour, Saran, Bihar',
+    locationHi: 'अमनौर, सारण, बिहार',
+    distChhapraEn: '~31 km',
+    distChhapraHi: '~31 किमी',
+    distPatnaEn: '~52 km',
+    distPatnaHi: '~52 किमी',
+    mapUrl: 'https://maps.google.com/?q=Amnour+Park'
+  });
+  const [seo, setSeo] = useState(null);
+  const [gallery, setGallery] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchData = async () => {
+    try {
+      const [heroRes, pricingRes, reachRes, attrRes, seoRes, galleryRes] = await Promise.all([
+        insforge.database.from('site_settings').select('data').eq('key', 'hero').single(),
+        insforge.database.from('site_settings').select('data').eq('key', 'pricing').single(),
+        insforge.database.from('site_settings').select('data').eq('key', 'reach').single(),
+        insforge.database.from('attractions').select('*').order('order_index', { ascending: true }),
+        insforge.database.from('site_settings').select('data').eq('key', 'seo').single(),
+        insforge.database.from('gallery').select('*').order('created_at', { ascending: false }).limit(6)
+      ]);
+
+      if (heroRes?.data) setHeroData(heroRes.data.data);
+      if (pricingRes?.data) setPricing(pricingRes.data.data);
+      if (reachRes?.data) setReach(reachRes.data.data);
+      if (attrRes?.data) setAttractions(attrRes.data);
+      if (seoRes?.data) setSeo(seoRes.data.data);
+      if (galleryRes?.data) setGallery(galleryRes.data);
+      
+      if (seoRes?.data?.data?.siteTitle) {
+        document.title = seoRes.data.data.siteTitle;
+      }
+    } catch (err) {
+      console.error('Error fetching data:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+
+    const handleUpdate = (e) => {
+      const { type } = e.detail;
+      if (['hero', 'pricing', 'reach', 'attractions', 'seo', 'gallery'].includes(type)) {
+        fetchData();
+      }
+    };
+
+    window.addEventListener('insforge:content_updated', handleUpdate);
+    return () => window.removeEventListener('insforge:content_updated', handleUpdate);
+  }, []);
+
+  if (isLoading || isSiteLoading) {
+    return (
+      <div className="w-full bg-cream min-h-screen">
+        <Skeleton height="90vh" className="w-full" />
+        <div className="max-w-7xl mx-auto px-4 py-20 space-y-20">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full bg-cream min-h-screen font-body text-text-dark">
+      
+      {/* Hero Section */}
+      <section className="relative h-[90vh] w-full flex flex-col justify-center items-center overflow-hidden">
+        <div className="absolute inset-0 z-0 bg-primary-green">
+          {heroData.videoUrl?.match(/\.(mp4|webm|ogg)$/i) || heroData.videoUrl?.includes('hero/videos') ? (
+            <video 
+              autoPlay 
+              loop 
+              muted 
+              playsInline
+              preload="auto"
+              key={heroData.videoUrl}
+              className="w-full h-full object-cover opacity-90 scale-105"
+            >
+              <source src={heroData.videoUrl} type="video/mp4" />
+            </video>
+          ) : (
+            <img 
+              src={heroData.videoUrl} 
+              alt="Amnour Park" 
+              fetchpriority="high"
+              loading="eager"
+              className="w-full h-full object-cover opacity-90 scale-105"
+            />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-b from-primary-green/20 via-transparent to-cream z-10" />
+        </div>
+
+        <div className="relative z-10 text-center px-4 sm:px-6 max-w-4xl mx-auto flex flex-col items-center">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white/10 backdrop-blur-md border border-white/20 text-white font-medium px-4 py-1.5 rounded-full text-sm mb-6 inline-flex items-center space-x-2 shadow-lg"
+          >
+            <span>🌿</span>
+            <span>{lang === 'EN' ? 'Amrit Sarovar, Bihar' : 'अमृत सरोवर, बिहार'}</span>
+          </motion.div>
+
+          <motion.h1 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-2 drop-shadow-md text-balance"
+          >
+            {lang === 'EN' ? heroData.titleEn : heroData.titleHi}
+          </motion.h1>
+          <motion.h2 className="text-2xl md:text-3xl font-heading font-semibold text-accent-gold mb-6 drop-shadow-sm italic">
+            {lang === 'EN' ? 'The Pride of Saran' : 'सारण की शान'}
+          </motion.h2>
+          <motion.p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto mb-10 font-body drop-shadow">
+            {lang === 'EN' ? heroData.descEn : heroData.descHi}
+          </motion.p>
+
+          <motion.div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6 w-full">
+            <Link to="/visit" className="w-full sm:w-auto bg-accent-gold hover:bg-accent-gold/90 text-text-dark px-8 py-4 rounded-full font-bold text-lg transition-all shadow-xl hover:-translate-y-1 flex items-center justify-center space-x-2">
+              <span>{lang === 'EN' ? 'Plan Your Visit' : 'अपनी यात्रा की योजना बनाएं'}</span>
+              <ArrowRight size={20} />
+            </Link>
+            <a href={reach.mapUrl} target="_blank" rel="noreferrer" className="w-full sm:w-auto bg-transparent border-2 border-white/60 hover:bg-white/10 text-white backdrop-blur-sm px-8 py-4 rounded-full font-bold text-lg transition-all flex items-center justify-center space-x-2 hover:-translate-y-1">
+              <span>{lang === 'EN' ? '📍 Get Directions' : '📍 रास्ता देखें'}</span>
+            </a>
+          </motion.div>
+        </div>
+      </section>
+
+      <InfoStrip />
+
+      {/* Attractions Preview */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary-green mb-3">
+            {lang === 'EN' ? 'Explore Our Attractions' : 'हमारे आकर्षण देखें'}
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+          {attractions.slice(0, 3).map((item, index) => (
+            <AttractionCard 
+              key={item.id}
+              {...item}
+              icon={getIcon(item.id)}
+              index={index}
+            />
+          ))}
+        </div>
+        
+        <div className="mt-16 text-center">
+          <Link to="/attractions" className="inline-flex items-center space-x-2 border-b-2 border-accent-gold pb-1 text-primary-green font-bold hover:text-accent-gold transition-colors text-lg">
+            <span>{lang === 'EN' ? 'View All Details' : 'सभी विवरण देखें'}</span>
+            <ArrowRight size={20} />
+          </Link>
+        </div>
+      </section>
+
+      {/* Pricing */}
+      <section className="py-24 bg-primary-green/5 border-y border-primary-green/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary-green mb-3">
+              {lang === 'EN' ? 'Affordable for Everyone' : 'सबके लिए किफायती'}
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <PricingCard title="Day Entry" price={pricing.dayEntry} icon="🌞" timing={reach.timingsEn.split(',')[0]} lang={lang} />
+            <PricingCard title="Evening Entry" price={pricing.eveningEntry} icon="🌙" timing="After 5:00 PM" lang={lang} premium />
+            <PricingCard title="Boating" price={pricing.boating} icon="🚣" timing="Approx. 15-30 min" lang={lang} perBoat />
+          </div>
+
+          <div className="mt-12 text-center text-sm text-text-dark/60 font-body bg-white w-fit mx-auto px-6 py-3 rounded-full border border-black/5 shadow-sm">
+            <span className="font-semibold text-text-dark">Parking:</span> Bike (₹{pricing.parkingBike})  •  Cycle (₹{pricing.parkingCycle})
+          </div>
+        </div>
+      </section>
+
+      {/* Gallery Teaser */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+          <div className="text-left">
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary-green mb-2">
+              {lang === 'EN' ? 'Moments at Amnour Park' : 'अमनौर पार्क के पल'}
+            </h2>
+          </div>
+          <Link to="/gallery" className="bg-primary-green hover:bg-primary-green/90 text-white px-6 py-3 rounded-xl font-medium shadow-md text-sm flex items-center space-x-2">
+            <span>{lang === 'EN' ? 'View All Photos' : 'सभी फोटो देखें'}</span>
+            <ArrowRight size={16} />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 h-[400px] md:h-[500px]">
+          {gallery.length > 0 ? (
+            <>
+              {/* Main Large Image */}
+              {gallery[0] && (
+                <div className="col-span-2 row-span-2 rounded-3xl overflow-hidden group shadow-xl">
+                  <img src={gallery[0].url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700" />
+                </div>
+              )}
+              
+              {/* Secondary Images */}
+              <div className="rounded-2xl md:rounded-3xl overflow-hidden group shadow-lg">
+                <img src={gallery[1]?.url || gallery[0]?.url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700" />
+              </div>
+              
+              <div className="rounded-2xl md:rounded-3xl overflow-hidden group border-4 border-white shadow-lg">
+                <img src={gallery[2]?.url || gallery[0]?.url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700" />
+              </div>
+
+              {gallery[3] && (
+                <div className="col-span-2 rounded-2xl md:rounded-3xl overflow-hidden group shadow-lg">
+                  <img src={gallery[3].url} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700" />
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="col-span-full h-full flex items-center justify-center bg-white/50 rounded-3xl border-2 border-dashed border-primary-green/20">
+               <p className="text-primary-green/60 font-medium italic">Photos appearing soon...</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* How to Reach */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+        <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-xl border border-light-green/10 flex flex-col md:flex-row items-center gap-10">
+          <div className="flex-1 space-y-6">
+            <h2 className="text-3xl font-heading font-bold text-primary-green mb-2">{lang === 'EN' ? 'Easy to Reach' : 'पहुँचना आसान है'}</h2>
+            <div className="space-y-4">
+               <ReachItem icon={<MapPin size={18} />} title={lang === 'EN' ? 'From Chhapra' : 'छपरा से'} desc={lang === 'EN' ? reach.distChhapraEn : reach.distChhapraHi} />
+               <ReachItem icon={<MapPin size={18} />} title={lang === 'EN' ? 'From Patna' : 'पटना से'} desc={lang === 'EN' ? reach.distPatnaEn : reach.distPatnaHi} />
+            </div>
+            <a href={reach.mapUrl} target="_blank" rel="noreferrer" className="inline-block mt-4 bg-primary-green text-white px-6 py-3 rounded-xl font-medium shadow-md text-sm">
+              {lang === 'EN' ? 'View Map' : 'नक्शा देखें'}
+            </a>
+          </div>
+
+          <div className="flex-1 w-full bg-cream rounded-3xl p-6 flex flex-col items-center justify-center min-h-[300px]">
+             <MapPin size={32} className="text-accent-gold mb-4" />
+             <h3 className="font-heading font-bold text-xl text-primary-green mb-1">Amnour Park</h3>
+             <p className="text-text-dark/70 text-sm text-center">{lang === 'EN' ? reach.locationEn : reach.locationHi}</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+const PricingCard = ({ title, price, icon, timing, lang, premium, perBoat }) => (
+  <motion.div className={`${premium ? 'bg-primary-green text-white scale-105' : 'bg-white text-text-dark'} rounded-3xl p-8 shadow-lg border border-primary-green/10 relative`}>
+    <div className="text-2xl mb-4">{icon}</div>
+    <h3 className="text-xl font-bold mb-1">{title}</h3>
+    <p className={`${premium ? 'text-white/60' : 'text-text-dark/60'} text-xs mb-6`}>{timing}</p>
+    <div className="flex items-baseline space-x-1 mb-4">
+      <span className={`text-4xl font-bold ${premium ? 'text-accent-gold' : 'text-primary-green'}`}>₹{price}</span>
+      <span className="text-xs opacity-50">/{perBoat ? 'boat' : 'person'}</span>
+    </div>
+  </motion.div>
+);
+
+const ReachItem = ({ icon, title, desc }) => (
+  <div className="flex items-start space-x-3">
+    <div className="bg-light-green/10 p-2 rounded-lg text-primary-green">{icon}</div>
+    <div>
+      <h4 className="font-bold text-text-dark text-sm">{title}</h4>
+      <p className="text-xs text-text-dark/60">{desc}</p>
+    </div>
+  </div>
+);
+
+export default Home;

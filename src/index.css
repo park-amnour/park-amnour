@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600&family=Playfair+Display:wght@600;700&family=Poppins:wght@500;600;700&family=Tiro+Devanagari+Hindi:ital@0;1&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-cream text-text-dark font-body antialiased selection:bg-light-green selection:text-white;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading text-text-dark;
+  }
+}
+
+@layer components {
+  /* You can add custom component classes here if needed, but we'll primarily stick to utility classes */
+}
+
+/* Custom Utilities for things Tailwind doesn't handle natively as easily */
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Hide scrollbar for the info strip but keep functionality */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
