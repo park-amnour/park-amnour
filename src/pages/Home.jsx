@@ -110,19 +110,17 @@ const Home = () => {
           if (!src) return resolve();
           const img = new Image();
           img.onload = resolve;
+          // Set to timeout quickly so broken images don't block the site forever
+          setTimeout(resolve, 800);
           img.onerror = resolve;
           img.src = src;
         });
 
-        // 1. Hero Image / Poster
+        // 1. Hero Image (Only if it's NOT a video! Browsers handle videos better via the unblocked native DOM)
         const heroItem = settingsRes?.data?.find(i => i.key === 'hero');
         const heroUrl = heroItem?.data?.videoUrl;
-        if (heroUrl) {
-          if (heroUrl.match(/\.(mp4|webm|ogg)$/i) || heroUrl.includes('hero/videos')) {
-            preloadPromises.push(preloadImage(heroUrl.replace(/\.(mp4|webm|ogg)$/i, '.jpg')));
-          } else {
-            preloadPromises.push(preloadImage(heroUrl));
-          }
+        if (heroUrl && !heroUrl.match(/\.(mp4|webm|ogg)$/i) && !heroUrl.includes('hero/videos')) {
+           preloadPromises.push(preloadImage(heroUrl));
         }
 
         // 2. Critical Attractions (first 3)
@@ -130,10 +128,10 @@ const Home = () => {
           attrRes.data.slice(0, 3).forEach(a => preloadPromises.push(preloadImage(a.image)));
         }
 
-        // Wait max 2.5 seconds for assets to download
+        // Wait max 1.5 seconds for these static images
         await Promise.race([
           Promise.all(preloadPromises),
-          new Promise(r => setTimeout(r, 2500))
+          new Promise(r => setTimeout(r, 1500))
         ]);
       } catch (e) {
         console.warn('Preloading timed out or failed cleanly', e);
@@ -162,18 +160,17 @@ const Home = () => {
   // Removed early return for animation transition
 
   return (
-    <AnimatePresence mode="wait">
-      {(isLoading || isSiteLoading) ? (
-        <SplashScreen key="splash" />
-      ) : (
-        <motion.div 
-          key="content"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4 }}
-          className="w-full bg-cream min-h-screen font-body text-text-dark"
-        >
-          {/* Hero Section */}
+    <>
+      <AnimatePresence>
+        {(isLoading || isSiteLoading) && <SplashScreen key="splash" />}
+      </AnimatePresence>
+
+      {/* Main page renders immediately so browser pre-fetches DOM images/videos! */}
+      <motion.div 
+        key="content"
+        className="w-full bg-cream min-h-screen font-body text-text-dark relative"
+      >
+        {/* Hero Section */}
       <section className="relative h-[90vh] w-full flex flex-col justify-center items-center overflow-hidden">
         <div className="absolute inset-0 z-0 bg-primary-green">
           {heroData.videoUrl?.match(/\.(mp4|webm|ogg)$/i) || heroData.videoUrl?.includes('hero/videos') ? (
@@ -460,9 +457,8 @@ const Home = () => {
           </div>
         </div>
       </section>
-        </motion.div>
-      )}
-    </AnimatePresence>
+      </motion.div>
+    </>
   );
 };
 
