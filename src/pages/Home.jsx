@@ -52,9 +52,11 @@ const Home = () => {
   const [pricing, setPricing] = useState({
     dayEntry: 10,
     eveningEntry: 25,
-    boating: 100,
+    boating2p: 50,
+    boating4p: 100,
     parkingBike: 10,
-    parkingCycle: 5
+    parkingCycle: 5,
+    festivalMode: false
   });
   const [reach, setReach] = useState({
     timingsEn: '7:00 AM – 9:00 PM',
@@ -162,10 +164,16 @@ const Home = () => {
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white/10 backdrop-blur-md border border-white/20 text-white font-medium px-4 py-1.5 rounded-full text-sm mb-6 inline-flex items-center space-x-2 shadow-lg"
+            className="flex flex-wrap justify-center gap-3 mb-6"
           >
-            <span>🌿</span>
-            <span>{lang === 'EN' ? 'Amrit Sarovar, Bihar' : 'अमृत सरोवर, बिहार'}</span>
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 text-white font-medium px-4 py-1.5 rounded-full text-sm inline-flex items-center space-x-2 shadow-lg">
+              <span>🌿</span>
+              <span>{lang === 'EN' ? 'Amrit Sarovar, Bihar' : 'अमृत सरोवर, बिहार'}</span>
+            </div>
+            <div className="bg-accent-gold/20 backdrop-blur-md border border-accent-gold/40 text-accent-gold font-bold px-4 py-1.5 rounded-full text-sm inline-flex items-center space-x-2 shadow-lg">
+              <span>❤️</span>
+              <span>{lang === 'EN' ? 'Best Place for Couples' : 'कपल्स के लिए सबसे अच्छी जगह'}</span>
+            </div>
           </motion.div>
 
           <motion.h1 
@@ -232,14 +240,79 @@ const Home = () => {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <PricingCard title="Day Entry" price={pricing.dayEntry} icon="🌞" timing={reach.timingsEn.split(',')[0]} lang={lang} />
-            <PricingCard title="Evening Entry" price={pricing.eveningEntry} icon="🌙" timing="After 5:00 PM" lang={lang} premium />
-            <PricingCard title="Boating" price={pricing.boating} icon="🚣" timing="Approx. 15-30 min" lang={lang} perBoat />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <PricingCard title={lang === 'EN' ? 'Day Entry' : 'प्रवेश (दिन)'} price={pricing.festivalMode ? 0 : pricing.dayEntry} icon="🌞" timing={reach.timingsEn.split(',')[0]} lang={lang} festival={pricing.festivalMode} />
+            <PricingCard title={lang === 'EN' ? 'Evening Entry' : 'प्रवेश (शाम)'} price={pricing.festivalMode ? 0 : pricing.eveningEntry} icon="🌙" timing="After 5:00 PM" lang={lang} premium festival={pricing.festivalMode} />
+            <PricingCard title={lang === 'EN' ? 'Boating (s)' : 'नौका विहार (2 व्यक्ति)'} price={pricing.festivalMode ? 0 : pricing.boating2p} icon="🚣" timing="2 Persons / 20 min" lang={lang} festival={pricing.festivalMode} />
+            <PricingCard title={lang === 'EN' ? 'Boating' : 'नौका विहार (4 व्यक्ति)'} price={pricing.festivalMode ? 0 : pricing.boating4p} icon="🚣" timing="4 Persons / 20 min" lang={lang} festival={pricing.festivalMode} />
           </div>
 
-          <div className="mt-12 text-center text-sm text-text-dark/60 font-body bg-white w-fit mx-auto px-6 py-3 rounded-full border border-black/5 shadow-sm">
-            <span className="font-semibold text-text-dark">Parking:</span> Bike (₹{pricing.parkingBike})  •  Cycle (₹{pricing.parkingCycle})
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-4 text-sm text-text-dark/60 font-body">
+            <div className="bg-white px-6 py-3 rounded-full border border-black/5 shadow-sm">
+              <span className="font-semibold text-text-dark">Parking:</span> Bike (₹{pricing.parkingBike})  •  Cycle (<span className="text-emerald-600 font-bold">FREE</span>)
+            </div>
+            {pricing.festivalMode && (
+              <div className="bg-red-500 text-white px-6 py-3 rounded-full font-bold shadow-lg shadow-red-500/20 animate-pulse">
+                🎊 {lang === 'EN' ? 'FESTIVAL OFFER: ALL ENTRY FREE!' : 'त्योहार ऑफर: सभी प्रवेश मुफ्त!'} 🎊
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Rules & Guidelines Section */}
+      <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-xl border border-red-500/10 overflow-hidden relative">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-red-500/5 rounded-full -mr-32 -mt-32 blur-3xl" />
+          
+          <div className="relative z-10">
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6">
+              <div>
+                <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary-green mb-2">
+                  {lang === 'EN' ? 'Rules & Guidelines' : 'पार्क के नियम और दिशा-निर्देश'}
+                </h2>
+                <p className="text-text-dark/50 text-sm">{lang === 'EN' ? 'Ensuring a safe and beautiful experience for everyone' : 'सभी के लिए एक सुरक्षित और सुंदर अनुभव सुनिश्चित करना'}</p>
+              </div>
+              <div className="bg-emerald-50 text-emerald-700 px-6 py-3 rounded-2xl border border-emerald-100 flex items-center space-x-3">
+                <span className="text-xl">🛡️</span>
+                <span className="font-bold text-sm">{lang === 'EN' ? 'Safety & Privacy Guaranteed' : 'सुरक्षा और प्राइवेसी की गारंटी'}</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <RuleItem 
+                icon="📸" 
+                title={lang === 'EN' ? 'Couple Privacy' : 'कपल्स की प्राइवेसी'} 
+                desc={lang === 'EN' ? 'Photography/Videography of couples is strictly prohibited. We respect your privacy.' : 'कपल्स का फोटो या वीडियो बनाना सख्त मना है। हम आपकी गोपनीयता का सम्मान करते हैं।'} 
+              />
+              <RuleItem 
+                icon="🌸" 
+                title={lang === 'EN' ? 'Protect Nature' : 'प्रकृति की रक्षा'} 
+                desc={lang === 'EN' ? 'Plucking flowers or damaging plants is a punishable offense. Fine: ₹500.' : 'फूल तोड़ना या पौधों को नुकसान पहुँचाना दंडनीय अपराध है। जुर्माना: ₹500।'} 
+                alert
+              />
+              <RuleItem 
+                icon="🚫" 
+                title={lang === 'EN' ? 'Pond Safety' : 'पोखरा सुरक्षा'} 
+                desc={lang === 'EN' ? 'Bathing in the Amrit Sarovar is strictly prohibited. Fine: ₹500.' : 'अमृत सरोवर में नहाना सख्त मना है। जुर्माना: ₹500।'} 
+                alert
+              />
+              <RuleItem 
+                icon="🚭" 
+                title={lang === 'EN' ? 'No Smoking' : 'धूम्रपान निषेध'} 
+                desc={lang === 'EN' ? 'Smoking and any type of intoxicant/drugs are strictly prohibited in the park premises.' : 'पार्क परिसर में धूम्रपान और किसी भी प्रकार के नशीले पदार्थों का उपयोग सख्त मना है।'} 
+              />
+              <RuleItem 
+                icon="📹" 
+                title={lang === 'EN' ? 'CCTV Surveillance' : 'CCTV निगरानी'} 
+                desc={lang === 'EN' ? 'The entire park is under 24/7 CCTV surveillance for your safety.' : 'आपकी सुरक्षा के लिए पूरा पार्क 24/7 CCTV कैमरों की निगरानी में है।'} 
+              />
+              <RuleItem 
+                icon="✨" 
+                title={lang === 'EN' ? 'Cleanliness' : 'स्वच्छता'} 
+                desc={lang === 'EN' ? 'Please use dustbins for all waste. Help us keep Amnour Park beautiful.' : 'कृपया सभी कचरे के लिए डस्टबिन का उपयोग करें। अमनौर पार्क को सुंदर रखने में हमारी मदद करें।'} 
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -316,16 +389,35 @@ const Home = () => {
   );
 };
 
-const PricingCard = ({ title, price, icon, timing, lang, premium, perBoat }) => (
-  <motion.div className={`${premium ? 'bg-primary-green text-white scale-105' : 'bg-white text-text-dark'} rounded-3xl p-8 shadow-lg border border-primary-green/10 relative`}>
+const PricingCard = ({ title, price, icon, timing, lang, premium, festival }) => (
+  <motion.div className={`${premium ? 'bg-primary-green text-white scale-105' : 'bg-white text-text-dark'} rounded-3xl p-8 shadow-lg border border-primary-green/10 relative overflow-hidden`}>
+    {festival && (
+      <div className="absolute top-0 right-0 bg-accent-gold text-text-dark font-bold text-[10px] px-4 py-1 -mr-4 mt-2 rotate-45 shadow-sm">
+        FREE
+      </div>
+    )}
     <div className="text-2xl mb-4">{icon}</div>
     <h3 className="text-xl font-bold mb-1">{title}</h3>
     <p className={`${premium ? 'text-white/60' : 'text-text-dark/60'} text-xs mb-6`}>{timing}</p>
     <div className="flex items-baseline space-x-1 mb-4">
-      <span className={`text-4xl font-bold ${premium ? 'text-accent-gold' : 'text-primary-green'}`}>₹{price}</span>
-      <span className="text-xs opacity-50">/{perBoat ? 'boat' : 'person'}</span>
+      {festival ? (
+        <span className={`text-4xl font-bold text-emerald-500 uppercase`}>FREE</span>
+      ) : (
+        <>
+          <span className={`text-4xl font-bold ${premium ? 'text-accent-gold' : 'text-primary-green'}`}>₹{price}</span>
+          <span className="text-xs opacity-50">/unit</span>
+        </>
+      )}
     </div>
   </motion.div>
+);
+
+const RuleItem = ({ icon, title, desc, alert }) => (
+  <div className={`p-6 rounded-2xl border transition-all ${alert ? 'bg-red-500/5 border-red-500/10 hover:border-red-500/30' : 'bg-cream/40 border-black/5 hover:border-primary-green/30'}`}>
+    <div className="text-2xl mb-4">{icon}</div>
+    <h4 className={`font-bold mb-2 ${alert ? 'text-red-600' : 'text-text-dark'}`}>{title}</h4>
+    <p className="text-xs text-text-dark/60 leading-relaxed font-body">{desc}</p>
+  </div>
 );
 
 const ReachItem = ({ icon, title, desc }) => (

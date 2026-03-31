@@ -9,9 +9,11 @@ const Visit = () => {
   const [pricing, setPricing] = useState({
     dayEntry: 10,
     eveningEntry: 25,
-    boating: 100,
+    boating2p: 50,
+    boating4p: 100,
     parkingBike: 10,
-    parkingCycle: 5
+    parkingCycle: 5,
+    festivalMode: false
   });
   const [reach, setReach] = useState({
     timingsEn: '7:00 AM – 9:00 PM, Daily',
@@ -73,31 +75,36 @@ const Visit = () => {
 
   const boatingDetails = [
     { field: lang === 'EN' ? 'Boating Available' : 'नौका विहार उपलब्ध है', value: lang === 'EN' ? 'Yes' : 'हाँ' },
-    { field: lang === 'EN' ? 'Boat Type' : 'नाव का प्रकार', value: lang === 'EN' ? 'Row Boat / Paddle Boat' : 'पडल बोट' },
-    { field: lang === 'EN' ? 'Price' : 'कीमत', value: `₹${pricing.boating}` },
-    { field: lang === 'EN' ? 'Capacity' : 'क्षमता', value: lang === 'EN' ? '4 persons' : '4 व्यक्ति' },
+    { field: lang === 'EN' ? 'Boat Type' : 'नाव का प्रकार', value: lang === 'EN' ? 'Paddle Boat' : 'पडल बोट' },
+    { field: lang === 'EN' ? 'Price (2 Persons)' : 'कीमत (2 व्यक्ति)', value: pricing.festivalMode ? 'FREE' : `₹${pricing.boating2p}` },
+    { field: lang === 'EN' ? 'Price (4 Persons)' : 'कीमत (4 व्यक्ति)', value: pricing.festivalMode ? 'FREE' : `₹${pricing.boating4p}` },
+    { field: lang === 'EN' ? 'Duration' : 'अवधि', value: '20 Mins' },
   ];
 
   const parkingFees = [
-    { type: lang === 'EN' ? 'Bicycle (Cycle)' : 'साइकिल', fee: `₹${pricing.parkingCycle}` },
+    { type: lang === 'EN' ? 'Bicycle (Cycle)' : 'साइकिल', fee: lang === 'EN' ? 'FREE' : 'मुफ्त' },
     { type: lang === 'EN' ? 'Bike / Motorcycle' : 'मोटर साइकिल', fee: `₹${pricing.parkingBike}` },
     { type: lang === 'EN' ? 'Car / Auto' : 'कार / ऑटो', fee: lang === 'EN' ? 'Available' : 'उपलब्ध' },
   ];
 
   const rules = lang === 'EN' ? [
-    'Keep the park clean.',
-    'Be careful near the lake side.',
+    'Photography/Videography of couples is strictly prohibited.',
+    'Couple privacy and safety is our top priority.',
+    'Plucking flowers or damaging plants is forbidden (Fine: ₹500).',
+    'Bathing in the Amrit Sarovar is strictly prohibited (Fine: ₹500).',
+    'Smoking and intoxicants are strictly prohibited.',
+    'The park is under 24/7 CCTV surveillance.',
     'Adult supervision for children is mandatory.',
-    'Do not throw plastic waste in the park.',
-    'Photography is allowed.',
-    'Follow the instructions of park security staff.'
+    'Do not throw plastic waste in the park.'
   ] : [
-    'पार्क में साफ़-सफ़ाई रखें।',
-    'पोखरा के पास सावधानी बरतें।',
+    'कपल्स की फोटोग्राफी या वीडियोग्राफी करना सख्त मना है।',
+    'कपल्स की प्राइवेसी और सुरक्षा हमारी पहली प्राथमिकता है।',
+    'फूल तोड़ना या पौधों को नुकसान पहुँचाना मना है (जुर्माना: ₹500)।',
+    'अमृत सरोवर में नहाना सख्त मना है (जुर्माना: ₹500)।',
+    'धूम्रपान और नशीले पदार्थों का सेवन सख्त मना है।',
+    'पूरा पार्क 24/7 CCTV कैमरों की निगरानी में है।',
     'बच्चों के साथ बड़ों का होना अनिवार्य है।',
-    'पार्क में प्लास्टिक कचरा न फेंकें।',
-    'फोटोग्राफी की अनुमति है।',
-    'पार्क सुरक्षा निर्देशों का पालन करें।'
+    'पार्क में प्लास्टिक कचरा न फेंकें।'
   ];
 
   return (

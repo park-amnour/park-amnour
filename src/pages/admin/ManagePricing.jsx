@@ -27,9 +27,11 @@ const ManagePricing = () => {
   const [pricing, setPricing] = useState({
     dayEntry: 10,
     eveningEntry: 25,
-    boating: 100,
+    boating2p: 50,
+    boating4p: 100,
     parkingBike: 10,
-    parkingCycle: 5
+    parkingCycle: 5,
+    festivalMode: false
   });
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -76,7 +78,7 @@ const ManagePricing = () => {
   };
 
   const updatePrice = (key, value) => {
-    setPricing(prev => ({ ...prev, [key]: parseInt(value) || 0 }));
+    setPricing(prev => ({ ...prev, [key]: key === 'festivalMode' ? value : (parseInt(value) || 0) }));
   };
 
   return (
@@ -120,10 +122,17 @@ const ManagePricing = () => {
         />
         <PriceCard 
           icon={Anchor} 
-          title="Boating Charge" 
-          value={pricing.boating} 
-          onChange={(v) => updatePrice('boating', v)}
-          color="bg-blue-500"
+          title="Boating (2 Persons)" 
+          value={pricing.boating2p} 
+          onChange={(v) => updatePrice('boating2p', v)}
+          color="bg-blue-400"
+        />
+        <PriceCard 
+          icon={Anchor} 
+          title="Boating (4 Persons)" 
+          value={pricing.boating4p} 
+          onChange={(v) => updatePrice('boating4p', v)}
+          color="bg-blue-600"
         />
         <PriceCard 
           icon={Bike} 
@@ -140,6 +149,25 @@ const ManagePricing = () => {
           color="bg-slate-400"
         />
       </div>
+
+      {/* Festival Mode Toggle */}
+      <section className="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 shadow-sm border border-black/5 flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <div className="p-3 bg-red-500/10 rounded-2xl text-red-500">
+            <RefreshCw size={24} className={pricing.festivalMode ? 'animate-spin' : ''} />
+          </div>
+          <div>
+            <h3 className="font-bold text-text-dark">Festival Mode (Teohar Offer)</h3>
+            <p className="text-text-dark/50 text-xs italic">Enable this to make entry/activities FREE for special occasions.</p>
+          </div>
+        </div>
+        <button 
+          onClick={() => updatePrice('festivalMode', !pricing.festivalMode)}
+          className={`relative w-14 h-7 rounded-full transition-colors duration-300 outline-none ${pricing.festivalMode ? 'bg-emerald-500' : 'bg-slate-300'}`}
+        >
+          <div className={`absolute top-1 left-1 bg-white w-5 h-5 rounded-full transition-transform duration-300 shadow-sm ${pricing.festivalMode ? 'translate-x-7' : 'translate-x-0'}`} />
+        </button>
+      </section>
 
       <div className="bg-accent-gold/5 p-6 rounded-[1.5rem] md:rounded-[2.5rem] border border-accent-gold/20 flex items-start space-x-4">
         <div className="bg-accent-gold/20 p-2 rounded-lg text-accent-gold mt-1 shrink-0">

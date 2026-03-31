@@ -7,7 +7,7 @@ const ManageSEO = () => {
   const [seo, setSeo] = useState({
     siteTitle: 'Amnour Park | Amrit Sarovar, Saran, Bihar',
     metaDesc: 'Experience Nature, Peace & Adventure at Saran\'s Beloved Park. Developed under the Mission Amrit Sarovar scheme.',
-    keywords: 'Amnour Park, Amrit Sarovar, Saran Tourism, Bihar Picnic Spot, Boating in Bihar',
+    keywords: 'amnour park, park amnour, pokhra amnour, amnour pokhra, best place amnour, best couple place, Amrit Sarovar, Saran Tourism, Bihar Picnic Spot, Boating in Bihar',
     ogImage: 'https://amnourpark.com/og-image.jpg'
   });
 
