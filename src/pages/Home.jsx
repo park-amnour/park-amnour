@@ -23,8 +23,8 @@ import { useLanguage } from '../context/LanguageContext';
 import { useSite } from '../context/SiteContext';
 import InfoStrip from '../components/InfoStrip';
 import AttractionCard from '../components/AttractionCard';
-import Skeleton, { CardSkeleton } from '../components/Skeleton';
 import FeedbackComponent from '../components/FeedbackComponent';
+import SplashScreen from '../components/SplashScreen';
 
 const getIcon = (id) => {
   switch(id) {
@@ -80,25 +80,28 @@ const Home = () => {
 
   const fetchData = async () => {
     try {
-      const [heroRes, pricingRes, reachRes, attrRes, seoRes, galleryRes] = await Promise.all([
-        insforge.database.from('site_settings').select('data').eq('key', 'hero').single(),
-        insforge.database.from('site_settings').select('data').eq('key', 'pricing').single(),
-        insforge.database.from('site_settings').select('data').eq('key', 'reach').single(),
+      const [settingsRes, attrRes, galleryRes] = await Promise.all([
+        insforge.database.from('site_settings').select('key, data').in('key', ['hero', 'pricing', 'reach', 'seo']),
         insforge.database.from('attractions').select('*').order('order_index', { ascending: true }),
-        insforge.database.from('site_settings').select('data').eq('key', 'seo').single(),
         insforge.database.from('gallery').select('*').order('created_at', { ascending: false }).limit(6)
       ]);
 
-      if (heroRes?.data) setHeroData(heroRes.data.data);
-      if (pricingRes?.data) setPricing(pricingRes.data.data);
-      if (reachRes?.data) setReach(reachRes.data.data);
-      if (attrRes?.data) setAttractions(attrRes.data);
-      if (seoRes?.data) setSeo(seoRes.data.data);
-      if (galleryRes?.data) setGallery(galleryRes.data);
-      
-      if (seoRes?.data?.data?.siteTitle) {
-        document.title = seoRes.data.data.siteTitle;
+      if (settingsRes?.data) {
+        settingsRes.data.forEach(item => {
+          if (item.key === 'hero') setHeroData(item.data);
+          if (item.key === 'pricing') setPricing(item.data);
+          if (item.key === 'reach') setReach(item.data);
+          if (item.key === 'seo') {
+            setSeo(item.data);
+            if (item.data?.siteTitle) {
+              document.title = item.data.siteTitle;
+            }
+          }
+        });
       }
+
+      if (attrRes?.data) setAttractions(attrRes.data);
+      if (galleryRes?.data) setGallery(galleryRes.data);
     } catch (err) {
       console.error('Error fetching data:', err);
     } finally {
@@ -121,18 +124,7 @@ const Home = () => {
   }, []);
 
   if (isLoading || isSiteLoading) {
-    return (
-      <div className="w-full bg-cream min-h-screen">
-        <Skeleton height="90vh" className="w-full" />
-        <div className="max-w-7xl mx-auto px-4 py-20 space-y-20">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <CardSkeleton />
-            <CardSkeleton />
-            <CardSkeleton />
-          </div>
-        </div>
-      </div>
-    );
+    return <SplashScreen />;
   }
 
   return (
