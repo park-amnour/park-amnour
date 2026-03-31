@@ -9,6 +9,7 @@ const FeedbackComponent = () => {
   const [feedbacks, setFeedbacks] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(3);
+  const [filterRating, setFilterRating] = useState(0);
   
   // Form State
   const [name, setName] = useState('');
@@ -90,13 +91,36 @@ const FeedbackComponent = () => {
     }
   };
 
+  const averageRating = feedbacks.length > 0 
+    ? (feedbacks.reduce((acc, curr) => acc + curr.rating, 0) / feedbacks.length).toFixed(1) 
+    : 0;
+
+  const filteredFeedbacks = filterRating === 0 
+    ? feedbacks 
+    : feedbacks.filter(fb => fb.rating === filterRating);
+
   return (
     <section id="feedback-section" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+      <div className="flex flex-col md:flex-row md:items-start justify-between mb-8 gap-6">
         <div>
-          <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary-green mb-3">
+          <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary-green mb-4">
             {lang === 'EN' ? 'Visitor Experiences' : 'दर्शकों के अनुभव'}
           </h2>
+          
+          <div className="flex items-center space-x-4 mb-4">
+            <div className="text-4xl font-bold text-accent-gold">{averageRating}</div>
+            <div>
+              <div className="flex items-center space-x-1 mb-1">
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <Star key={s} size={16} className={s <= Math.round(averageRating) ? "fill-yellow-400 text-yellow-400" : "fill-slate-100 text-slate-100"} />
+                ))}
+              </div>
+              <p className="text-text-dark/60 text-xs font-bold uppercase tracking-wider">
+                {feedbacks.length} {lang === 'EN' ? 'Total Reviews' : 'कुल समीक्षाएं'}
+              </p>
+            </div>
+          </div>
+
           <p className="text-text-dark/60 font-body max-w-xl">
             {lang === 'EN' 
               ? 'See what others are saying about the peace and beauty of Amnour Park.' 
@@ -112,10 +136,36 @@ const FeedbackComponent = () => {
         </button>
       </div>
 
-      {feedbacks.length > 0 ? (
+      {feedbacks.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 mb-8">
+          <button 
+            onClick={() => { setFilterRating(0); setVisibleCount(3); }}
+            className={`px-4 py-2 rounded-full text-sm font-bold transition-all border ${filterRating === 0 ? 'bg-primary-green text-white border-primary-green' : 'bg-white text-text-dark border-black/10 hover:border-primary-green/50'}`}
+          >
+            {lang === 'EN' ? 'All' : 'सभी'}
+          </button>
+          {[5, 4, 3, 2, 1].map(stars => {
+            const count = feedbacks.filter(fb => fb.rating === stars).length;
+            if (count === 0) return null; // Only show filters for ratings that exist
+            return (
+              <button 
+                key={stars}
+                onClick={() => { setFilterRating(stars); setVisibleCount(3); }}
+                className={`flex items-center space-x-1 px-4 py-2 rounded-full text-sm font-bold transition-all border ${filterRating === stars ? 'bg-primary-green text-white border-primary-green' : 'bg-white text-text-dark border-black/10 hover:border-primary-green/50'}`}
+              >
+                <span>{stars}</span>
+                <Star size={14} className={filterRating === stars ? 'fill-white text-white' : 'fill-yellow-400 text-yellow-400'} />
+                <span className="opacity-60 text-xs ml-1">({count})</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {filteredFeedbacks.length > 0 ? (
         <div className="space-y-10">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {feedbacks.slice(0, visibleCount).map((fb) => (
+            {filteredFeedbacks.slice(0, visibleCount).map((fb) => (
               <motion.div 
               key={fb.id}
               initial={{ opacity: 0, y: 20 }}
@@ -153,7 +203,7 @@ const FeedbackComponent = () => {
           </div>
           
           <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-            {feedbacks.length > visibleCount && (
+            {filteredFeedbacks.length > visibleCount && (
               <button 
                 onClick={() => setVisibleCount(prev => prev + 3)}
                 className="bg-white border-2 border-primary-green text-primary-green hover:bg-primary-green hover:text-white px-8 py-3 rounded-full font-bold transition-all shadow-sm"
@@ -174,6 +224,12 @@ const FeedbackComponent = () => {
               </button>
             )}
           </div>
+        </div>
+      ) : feedbacks.length > 0 ? (
+        <div className="text-center py-16 bg-white/50 rounded-[2rem] border border-black/5">
+          <p className="text-text-dark/50 font-medium font-body">
+            {lang === 'EN' ? `No reviews with ${filterRating} stars.` : `${filterRating} स्टार वाली कोई समीक्षा नहीं मिली।`}
+          </p>
         </div>
       ) : (
         <div className="text-center py-16 bg-white/50 rounded-[2rem] border border-black/5">
