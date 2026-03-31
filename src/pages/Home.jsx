@@ -102,6 +102,42 @@ const Home = () => {
 
       if (attrRes?.data) setAttractions(attrRes.data);
       if (galleryRes?.data) setGallery(galleryRes.data);
+
+      // Critical Asset Preloading during Splash Screen
+      try {
+        const preloadPromises = [];
+        const preloadImage = (src) => new Promise(resolve => {
+          if (!src) return resolve();
+          const img = new Image();
+          img.onload = resolve;
+          img.onerror = resolve;
+          img.src = src;
+        });
+
+        // 1. Hero Image / Poster
+        const heroItem = settingsRes?.data?.find(i => i.key === 'hero');
+        const heroUrl = heroItem?.data?.videoUrl;
+        if (heroUrl) {
+          if (heroUrl.match(/\.(mp4|webm|ogg)$/i) || heroUrl.includes('hero/videos')) {
+            preloadPromises.push(preloadImage(heroUrl.replace(/\.(mp4|webm|ogg)$/i, '.jpg')));
+          } else {
+            preloadPromises.push(preloadImage(heroUrl));
+          }
+        }
+
+        // 2. Critical Attractions (first 3)
+        if (attrRes?.data) {
+          attrRes.data.slice(0, 3).forEach(a => preloadPromises.push(preloadImage(a.image)));
+        }
+
+        // Wait max 2.5 seconds for assets to download
+        await Promise.race([
+          Promise.all(preloadPromises),
+          new Promise(r => setTimeout(r, 2500))
+        ]);
+      } catch (e) {
+        console.warn('Preloading timed out or failed cleanly', e);
+      }
     } catch (err) {
       console.error('Error fetching data:', err);
     } finally {
