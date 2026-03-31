@@ -11,9 +11,12 @@ const InfoStrip = () => {
     timingsHi: '7:00 AM – 9:00 PM, प्रतिदिन',
     dayEntry: 10,
     eveningEntry: 25,
+    entryFree: false,
     locationEn: 'Amnour, Saran, Bihar',
     locationHi: 'अमनौर, सारण, बिहार',
-    boating: 100
+    boating2p: 50,
+    boating4p: 100,
+    boatingFree: false
   });
 
   useEffect(() => {
@@ -32,7 +35,10 @@ const InfoStrip = () => {
           const p = pricingRes.data;
           newData.dayEntry = p.dayEntry;
           newData.eveningEntry = p.eveningEntry;
-          newData.boating = p.boating;
+          newData.boating2p = p.boating2p;
+          newData.boating4p = p.boating4p;
+          newData.boatingFree = p.boatingFree;
+          newData.entryFree = p.entryFree;
         }
         if (reachRes) {
           const r = reachRes.data;
@@ -68,9 +74,11 @@ const InfoStrip = () => {
     { 
       icon: Ticket, 
       title: lang === 'EN' ? 'Entry Fee' : 'प्रवेश शुल्क', 
-      desc: lang === 'EN' 
-        ? `₹${data.dayEntry} (Day) | ₹${data.eveningEntry} (Evening)` 
-        : `₹${data.dayEntry} (दिन) | ₹${data.eveningEntry} (शाम)` 
+      desc: data.entryFree 
+        ? (lang === 'EN' ? 'FREE' : 'मुफ़्त')
+        : (lang === 'EN' 
+            ? `₹${data.dayEntry} (Day) | ₹${data.eveningEntry} (Evening)` 
+            : `₹${data.dayEntry} (दिन) | ₹${data.eveningEntry} (शाम)`)
     },
     { 
       icon: MapPin, 
@@ -80,7 +88,11 @@ const InfoStrip = () => {
     { 
       icon: Ship, 
       title: lang === 'EN' ? 'Boating' : 'नौका विहार', 
-      desc: lang === 'EN' ? `₹${data.boating} / 4 Persons` : `₹${data.boating} / 4 व्यक्ति` 
+      desc: data.boatingFree 
+        ? (lang === 'EN' ? 'FREE' : 'मुफ़्त') 
+        : (lang === 'EN' 
+            ? `₹${data.boating2p} (2P) | ₹${data.boating4p} (4P)`
+            : `₹${data.boating2p} (2P) | ₹${data.boating4p} (4P)`)
     },
   ];
 

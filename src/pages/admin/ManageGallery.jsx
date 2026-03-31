@@ -90,6 +90,7 @@ const ManageGallery = () => {
         console.error('Upsert error details:', error);
         throw error;
       }
+      window.dispatchEvent(new CustomEvent('insforge:content_updated', { detail: { type: 'gallery' } }));
 
       // Broadcast real-time update
       try {

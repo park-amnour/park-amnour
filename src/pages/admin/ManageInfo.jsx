@@ -80,6 +80,10 @@ const ManageInfo = () => {
       
       if (error) throw error;
       
+      window.dispatchEvent(new CustomEvent('insforge:content_updated', { 
+        detail: { type: 'reach' } 
+      }));
+
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
     } catch (err) {

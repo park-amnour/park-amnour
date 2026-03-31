@@ -55,8 +55,12 @@ const Home = () => {
     boating2p: 50,
     boating4p: 100,
     parkingBike: 10,
-    parkingCycle: 5,
-    festivalMode: false
+    parkingCycle: 0,
+    entryFree: false,
+    boatingFree: false,
+    parkingFree: false,
+    festivalName: '',
+    festivalUntil: ''
   });
   const [reach, setReach] = useState({
     timingsEn: '7:00 AM – 9:00 PM',
@@ -240,20 +244,50 @@ const Home = () => {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <PricingCard title={lang === 'EN' ? 'Day Entry' : 'प्रवेश (दिन)'} price={pricing.festivalMode ? 0 : pricing.dayEntry} icon="🌞" timing={reach.timingsEn.split(',')[0]} lang={lang} festival={pricing.festivalMode} />
-            <PricingCard title={lang === 'EN' ? 'Evening Entry' : 'प्रवेश (शाम)'} price={pricing.festivalMode ? 0 : pricing.eveningEntry} icon="🌙" timing="After 5:00 PM" lang={lang} premium festival={pricing.festivalMode} />
-            <PricingCard title={lang === 'EN' ? 'Boating (s)' : 'नौका विहार (2 व्यक्ति)'} price={pricing.festivalMode ? 0 : pricing.boating2p} icon="🚣" timing="2 Persons / 20 min" lang={lang} festival={pricing.festivalMode} />
-            <PricingCard title={lang === 'EN' ? 'Boating' : 'नौका विहार (4 व्यक्ति)'} price={pricing.festivalMode ? 0 : pricing.boating4p} icon="🚣" timing="4 Persons / 20 min" lang={lang} festival={pricing.festivalMode} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <PricingCard title={lang === 'EN' ? 'Day Entry' : 'प्रवेश (दिन)'} price={pricing.entryFree ? 'FREE' : pricing.dayEntry} icon="🌞" timing={reach.timingsEn.split(',')[0]} isFree={pricing.entryFree} />
+            <PricingCard title={lang === 'EN' ? 'Evening Entry' : 'प्रवेश (शाम)'} price={pricing.entryFree ? 'FREE' : pricing.eveningEntry} icon="🌙" timing="After 5:00 PM" premium isFree={pricing.entryFree} />
+            
+            <motion.div className="bg-white text-text-dark rounded-3xl p-8 shadow-lg border border-primary-green/10 relative overflow-hidden">
+              {pricing.boatingFree && (
+                <div className="absolute top-0 right-0 bg-accent-gold text-text-dark font-bold text-[10px] px-4 py-1 -mr-4 mt-2 rotate-45 shadow-sm">
+                  FREE
+                </div>
+              )}
+              <div className="text-2xl mb-4">🚣</div>
+              <h3 className="text-xl font-bold mb-1">{lang === 'EN' ? 'Boating' : 'नौका विहार'}</h3>
+              <p className="text-text-dark/60 text-xs mb-6">20 mins ride</p>
+              
+              <div className="flex flex-col space-y-3">
+                <div className="flex justify-between items-center border-b border-black/5 pb-2">
+                  <span className="text-sm font-medium">{lang === 'EN' ? '2 Persons' : '2 व्यक्ति'}</span>
+                  {pricing.boatingFree ? (
+                    <span className="font-bold text-emerald-500">FREE</span>
+                  ) : (
+                    <span className="font-bold text-primary-green">₹{pricing.boating2p}</span>
+                  )}
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium">{lang === 'EN' ? '4 Persons' : '4 व्यक्ति'}</span>
+                  {pricing.boatingFree ? (
+                    <span className="font-bold text-emerald-500">FREE</span>
+                  ) : (
+                    <span className="font-bold text-primary-green">₹{pricing.boating4p}</span>
+                  )}
+                </div>
+              </div>
+            </motion.div>
           </div>
 
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-4 text-sm text-text-dark/60 font-body">
-            <div className="bg-white px-6 py-3 rounded-full border border-black/5 shadow-sm">
-              <span className="font-semibold text-text-dark">Parking:</span> Bike (₹{pricing.parkingBike})  •  Cycle (<span className="text-emerald-600 font-bold">FREE</span>)
+          <div className="mt-12 flex flex-col items-center justify-center gap-4 text-sm text-text-dark/60 font-body">
+            <div className={`bg-white px-6 py-3 rounded-full border border-black/5 shadow-sm ${pricing.parkingFree ? 'ring-2 ring-emerald-400 bg-emerald-50' : ''}`}>
+              <span className="font-semibold text-text-dark">Parking:</span> Bike ({pricing.parkingFree ? <span className="text-emerald-600 font-bold">FREE</span> : `₹${pricing.parkingBike}`})  •  Cycle (<span className="text-emerald-600 font-bold">FREE</span>)
             </div>
-            {pricing.festivalMode && (
-              <div className="bg-red-500 text-white px-6 py-3 rounded-full font-bold shadow-lg shadow-red-500/20 animate-pulse">
-                🎊 {lang === 'EN' ? 'FESTIVAL OFFER: ALL ENTRY FREE!' : 'त्योहार ऑफर: सभी प्रवेश मुफ्त!'} 🎊
+            
+            {(pricing.entryFree || pricing.boatingFree || pricing.parkingFree) && pricing.festivalName && (
+              <div className="bg-red-500 text-white px-8 py-4 rounded-2xl font-bold shadow-lg shadow-red-500/20 text-center animate-pulse">
+                <div className="text-xl mb-1">🎊 {pricing.festivalName} {lang === 'EN' ? 'Special Offer!' : 'खास ऑफर!'} 🎊</div>
+                {pricing.festivalUntil && <div className="text-sm font-medium text-white/90">Valid {lang === 'EN' ? 'Until' : 'तक'}: {pricing.festivalUntil}</div>}
               </div>
             )}
           </div>
@@ -389,9 +423,9 @@ const Home = () => {
   );
 };
 
-const PricingCard = ({ title, price, icon, timing, lang, premium, festival }) => (
+const PricingCard = ({ title, price, icon, timing, premium, isFree }) => (
   <motion.div className={`${premium ? 'bg-primary-green text-white scale-105' : 'bg-white text-text-dark'} rounded-3xl p-8 shadow-lg border border-primary-green/10 relative overflow-hidden`}>
-    {festival && (
+    {isFree && (
       <div className="absolute top-0 right-0 bg-accent-gold text-text-dark font-bold text-[10px] px-4 py-1 -mr-4 mt-2 rotate-45 shadow-sm">
         FREE
       </div>
@@ -400,12 +434,12 @@ const PricingCard = ({ title, price, icon, timing, lang, premium, festival }) =>
     <h3 className="text-xl font-bold mb-1">{title}</h3>
     <p className={`${premium ? 'text-white/60' : 'text-text-dark/60'} text-xs mb-6`}>{timing}</p>
     <div className="flex items-baseline space-x-1 mb-4">
-      {festival ? (
+      {isFree ? (
         <span className={`text-4xl font-bold text-emerald-500 uppercase`}>FREE</span>
       ) : (
         <>
           <span className={`text-4xl font-bold ${premium ? 'text-accent-gold' : 'text-primary-green'}`}>₹{price}</span>
-          <span className="text-xs opacity-50">/unit</span>
+          <span className="text-xs opacity-50">/person</span>
         </>
       )}
     </div>

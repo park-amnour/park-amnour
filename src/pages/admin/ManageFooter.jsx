@@ -61,6 +61,7 @@ const ManageFooter = () => {
         .upsert({ key: 'footer', data: footer });
       
       if (error) throw error;
+      window.dispatchEvent(new CustomEvent('insforge:content_updated', { detail: { type: 'footer' } }));
       
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);

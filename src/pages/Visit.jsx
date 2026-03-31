@@ -12,8 +12,12 @@ const Visit = () => {
     boating2p: 50,
     boating4p: 100,
     parkingBike: 10,
-    parkingCycle: 5,
-    festivalMode: false
+    parkingCycle: 0,
+    entryFree: false,
+    boatingFree: false,
+    parkingFree: false,
+    festivalName: '',
+    festivalUntil: ''
   });
   const [reach, setReach] = useState({
     timingsEn: '7:00 AM – 9:00 PM, Daily',
@@ -63,12 +67,16 @@ const Visit = () => {
     { 
       session: lang === 'EN' ? 'Morning / Day Session' : 'सुबह / दिन का सत्र', 
       time: reach.timingsEn.split(',')[0], 
-      fee: lang === 'EN' ? `₹${pricing.dayEntry} per person` : `₹${pricing.dayEntry} प्रति व्यक्ति` 
+      fee: pricing.entryFree 
+        ? <span className="text-emerald-500 font-bold">FREE</span> 
+        : (lang === 'EN' ? `₹${pricing.dayEntry} per person` : `₹${pricing.dayEntry} प्रति व्यक्ति`)
     },
     { 
       session: lang === 'EN' ? 'Evening Session' : 'शाम का सत्र', 
       time: 'After 5:00 PM', 
-      fee: lang === 'EN' ? `₹${pricing.eveningEntry} per person` : `₹${pricing.eveningEntry} प्रति व्यक्ति`, 
+      fee: pricing.entryFree 
+        ? <span className="text-emerald-500 font-bold">FREE</span> 
+        : (lang === 'EN' ? `₹${pricing.eveningEntry} per person` : `₹${pricing.eveningEntry} प्रति व्यक्ति`), 
       note: lang === 'EN' ? 'Special lighting & decor' : 'विशेष लाइटिंग और सजावट' 
     },
   ];
@@ -76,14 +84,14 @@ const Visit = () => {
   const boatingDetails = [
     { field: lang === 'EN' ? 'Boating Available' : 'नौका विहार उपलब्ध है', value: lang === 'EN' ? 'Yes' : 'हाँ' },
     { field: lang === 'EN' ? 'Boat Type' : 'नाव का प्रकार', value: lang === 'EN' ? 'Paddle Boat' : 'पडल बोट' },
-    { field: lang === 'EN' ? 'Price (2 Persons)' : 'कीमत (2 व्यक्ति)', value: pricing.festivalMode ? 'FREE' : `₹${pricing.boating2p}` },
-    { field: lang === 'EN' ? 'Price (4 Persons)' : 'कीमत (4 व्यक्ति)', value: pricing.festivalMode ? 'FREE' : `₹${pricing.boating4p}` },
+    { field: lang === 'EN' ? 'Price (2 Persons)' : 'कीमत (2 व्यक्ति)', value: pricing.boatingFree ? <span className="text-emerald-500 font-bold">FREE</span> : `₹${pricing.boating2p}` },
+    { field: lang === 'EN' ? 'Price (4 Persons)' : 'कीमत (4 व्यक्ति)', value: pricing.boatingFree ? <span className="text-emerald-500 font-bold">FREE</span> : `₹${pricing.boating4p}` },
     { field: lang === 'EN' ? 'Duration' : 'अवधि', value: '20 Mins' },
   ];
 
   const parkingFees = [
-    { type: lang === 'EN' ? 'Bicycle (Cycle)' : 'साइकिल', fee: lang === 'EN' ? 'FREE' : 'मुफ्त' },
-    { type: lang === 'EN' ? 'Bike / Motorcycle' : 'मोटर साइकिल', fee: `₹${pricing.parkingBike}` },
+    { type: lang === 'EN' ? 'Bicycle (Cycle)' : 'साइकिल', fee: <span className="text-emerald-500 font-bold">{lang === 'EN' ? 'FREE' : 'मुफ़्त'}</span> },
+    { type: lang === 'EN' ? 'Bike / Motorcycle' : 'मोटर साइकिल', fee: pricing.parkingFree ? <span className="text-emerald-500 font-bold">FREE</span> : `₹${pricing.parkingBike}` },
     { type: lang === 'EN' ? 'Car / Auto' : 'कार / ऑटो', fee: lang === 'EN' ? 'Available' : 'उपलब्ध' },
   ];
 

@@ -108,6 +108,7 @@ const ManageAttractions = () => {
       } catch (e) {
         console.warn('Real-time broadcast failed:', e);
       }
+      window.dispatchEvent(new CustomEvent('insforge:content_updated', { detail: { type: 'attractions' } }));
 
       const { data } = await insforge.database
         .from('attractions')

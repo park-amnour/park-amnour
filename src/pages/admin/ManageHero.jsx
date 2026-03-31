@@ -54,6 +54,7 @@ const ManageHero = () => {
         .upload(fileName, file);
       
       if (error) throw error;
+      window.dispatchEvent(new CustomEvent('insforge:content_updated', { detail: { type: 'hero' } }));
 
       const publicUrl = insforge.storage.from('media').getPublicUrl(fileName);
       const newData = { ...heroData, videoUrl: publicUrl };
@@ -77,6 +78,7 @@ const ManageHero = () => {
         .upsert({ key: 'hero', data: dataToSave });
       
       if (error) throw error;
+      window.dispatchEvent(new CustomEvent('insforge:content_updated', { detail: { type: 'hero' } }));
       
       // Broadcast real-time update
       try {

@@ -77,6 +77,7 @@ const ManageSEO = () => {
         .upsert({ key: 'seo', data: seo });
       
       if (error) throw error;
+      window.dispatchEvent(new CustomEvent('insforge:content_updated', { detail: { type: 'seo' } }));
       
       document.title = seo.siteTitle;
       setShowSuccess(true);
