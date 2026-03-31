@@ -47,9 +47,9 @@ const Dashboard = () => {
   ];
 
   const recentActivities = [
-    { title: 'Hero Section updated', time: '2 hours ago', user: 'Admin' },
-    { title: 'New attraction "Boating" added', time: '5 hours ago', user: 'Staff' },
-    { title: 'Gallery images reorganized', time: 'Yesterday', user: 'Admin' },
+    { title: 'Hero Section updated', time: 'Recently', user: 'Admin' },
+    { title: 'Gallery images synchronized', time: 'Recently', user: 'System' },
+    { title: 'Site SEO parameters updated', time: 'Recently', user: 'Admin' },
   ];
 
   return (

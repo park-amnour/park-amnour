@@ -9,24 +9,11 @@ const originalWarn = console.warn;
 
 const SILENCED_MESSAGES = [
   'auth/refresh',
-  'Could not establish connection',
-  'Receiving end does not exist',
   'Extension',
   'Violation',
-  'unauthorized',
-  'bad request',
-  '400',
-  '401',
-  'failed to load resource',
-  'status of 401',
-  'status of 400',
-  'timeout',
-  'websocket',
-  'connection failed',
-  'net::ERR',
-  'socket',
-  'err_name_not',
-  'io client disconnect'
+  'io client disconnect',
+  'message channel closed',
+  'listener indicated an asynchronous response'
 ];
 
 if ('serviceWorker' in navigator) {

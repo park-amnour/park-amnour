@@ -3,6 +3,26 @@ import { motion } from 'framer-motion';
 import { IndianRupee, Save, RefreshCw, Sun, Moon, Anchor, Bike } from 'lucide-react';
 import { insforge } from '../../lib/insforge';
 
+const PriceCard = ({ icon: Icon, title, value, onChange, color }) => (
+  <div className="bg-white p-5 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border border-black/5 shadow-sm space-y-3">
+    <div className="flex items-center space-x-3">
+      <div className={`${color} p-2 rounded-lg text-white shadow-sm`}>
+        <Icon size={16} />
+      </div>
+      <h3 className="font-bold text-sm text-text-dark">{title}</h3>
+    </div>
+    <div className="relative">
+      <IndianRupee size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-dark/40" />
+      <input 
+        type="number" 
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full bg-[#F8FAF9] border border-black/5 rounded-xl py-3 pl-10 pr-4 text-text-dark font-bold focus:border-primary-green/50 outline-none transition-all text-sm"
+      />
+    </div>
+  </div>
+);
+
 const ManagePricing = () => {
   const [pricing, setPricing] = useState({
     dayEntry: 10,
@@ -58,26 +78,6 @@ const ManagePricing = () => {
   const updatePrice = (key, value) => {
     setPricing(prev => ({ ...prev, [key]: parseInt(value) || 0 }));
   };
-
-  const PriceCard = ({ icon: Icon, title, value, onChange, color }) => (
-    <div className="bg-white p-5 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border border-black/5 shadow-sm space-y-3">
-      <div className="flex items-center space-x-3">
-        <div className={`${color} p-2 rounded-lg text-white shadow-sm`}>
-          <Icon size={16} />
-        </div>
-        <h3 className="font-bold text-sm text-text-dark">{title}</h3>
-      </div>
-      <div className="relative">
-        <IndianRupee size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-dark/40" />
-        <input 
-          type="number" 
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="w-full bg-[#F8FAF9] border border-black/5 rounded-xl py-3 pl-10 pr-4 text-text-dark font-bold focus:border-primary-green/50 outline-none transition-all text-sm"
-        />
-      </div>
-    </div>
-  );
 
   return (
     <div className="max-w-4xl space-y-6 md:space-y-8 pb-20">

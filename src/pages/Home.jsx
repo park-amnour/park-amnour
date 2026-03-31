@@ -27,11 +27,13 @@ import Skeleton, { CardSkeleton } from '../components/Skeleton';
 
 const getIcon = (id) => {
   switch(id) {
-    case 'pokhra': return <Waves size={24} />;
-    case 'temple': return <Tent size={24} />;
-    case 'park': return <Wind size={24} />;
-    case 'boating': return <Waves size={24} />;
-    case 'kids': return <Sparkles size={24} />;
+    case '11111111-1111-1111-1111-111111111111': return <Waves size={24} />; // Lake
+    case '22222222-2222-2222-2222-222222222222': return <Waves size={24} />; // Boating
+    case '33333333-3333-3333-3333-333333333333': return <Sparkles size={24} />; // Kids
+    case '44444444-4444-4444-4444-444444444444': return <Wind size={24} />; // Sunset
+    case '55555555-5555-5555-5555-555555555555': return <Sparkles size={24} />; // Garden
+    case '66666666-6666-6666-6666-666666666666': return <Compass size={24} />; // Nature Trail
+    case '77777777-7777-7777-7777-777777777777': return <Star size={24} />; // Picnic Deck
     default: return <Navigation size={24} />;
   }
 };

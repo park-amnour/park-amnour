@@ -2,6 +2,37 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Save, RefreshCw, Clock, MapPin, Compass, Navigation } from 'lucide-react';
 import { insforge } from '../../lib/insforge';
+import { HindiInput } from '../../components/HindiInput';
+
+const InputSection = ({ icon: Icon, label, valueEn, valueHi, onChangeEn, onChangeHi }) => (
+  <div className="bg-white p-5 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] border border-black/5 shadow-sm space-y-4 md:space-y-6">
+    <div className="flex items-center space-x-3 text-primary-green">
+      <div className="bg-primary-green/10 p-2 rounded-lg">
+        <Icon size={18} />
+      </div>
+      <h3 className="font-bold text-base md:text-lg">{label}</h3>
+    </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+      <div className="space-y-2">
+        <label className="text-[10px] font-bold text-text-dark/40 uppercase tracking-widest px-1">English</label>
+        <input 
+          type="text" 
+          value={valueEn}
+          onChange={(e) => onChangeEn(e.target.value)}
+          className="w-full bg-[#F8FAF9] border border-black/5 rounded-xl py-2.5 md:py-3 px-4 text-sm text-text-dark font-medium focus:border-primary-green/50 outline-none transition-all"
+        />
+      </div>
+      <HindiInput 
+        label="Hindi" 
+        value={valueHi} 
+        syncValue={valueEn}
+        onChange={onChangeHi} 
+        className="sm:text-right"
+        placeholder="हिंदी में..."
+      />
+    </div>
+  </div>
+);
 
 const ManageInfo = () => {
   const [reachData, setReachData] = useState({
@@ -62,37 +93,6 @@ const ManageInfo = () => {
   const updateField = (key, value) => {
     setReachData(prev => ({ ...prev, [key]: value }));
   };
-
-  const InputSection = ({ icon: Icon, label, valueEn, valueHi, onChangeEn, onChangeHi }) => (
-    <div className="bg-white p-5 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] border border-black/5 shadow-sm space-y-4 md:space-y-6">
-      <div className="flex items-center space-x-3 text-primary-green">
-        <div className="bg-primary-green/10 p-2 rounded-lg">
-          <Icon size={18} />
-        </div>
-        <h3 className="font-bold text-base md:text-lg">{label}</h3>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-        <div className="space-y-2">
-          <label className="text-[10px] font-bold text-text-dark/40 uppercase tracking-widest px-1">English</label>
-          <input 
-            type="text" 
-            value={valueEn}
-            onChange={(e) => onChangeEn(e.target.value)}
-            className="w-full bg-[#F8FAF9] border border-black/5 rounded-xl py-2.5 md:py-3 px-4 text-sm text-text-dark font-medium focus:border-primary-green/50 outline-none transition-all"
-          />
-        </div>
-        <div className="space-y-2">
-          <label className="text-[10px] font-bold text-text-dark/40 uppercase tracking-widest px-1 sm:text-right block">Hindi</label>
-          <input 
-            type="text" 
-            value={valueHi}
-            onChange={(e) => onChangeHi(e.target.value)}
-            className="w-full bg-[#F8FAF9] border border-black/5 rounded-xl py-2.5 md:py-3 px-4 text-sm text-text-dark font-medium focus:border-primary-green/50 outline-none transition-all sm:text-right"
-          />
-        </div>
-      </div>
-    </div>
-  );
 
   return (
     <div className="max-w-4xl space-y-6 md:space-y-8 pb-20">

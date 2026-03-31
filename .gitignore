@@ -37,3 +37,8 @@ dist-ssr
 .roo
 .trae
 .windsurf
+
+# Env files
+.env
+.env.local
+.env.*.local

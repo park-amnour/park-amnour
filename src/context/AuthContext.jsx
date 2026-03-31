@@ -6,6 +6,7 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const lastActivity = useRef(Date.now());
   const userRef = useRef(null);
 
   useEffect(() => {
@@ -13,10 +14,17 @@ export const AuthProvider = ({ children }) => {
   }, [user]);
 
   useEffect(() => {
+    const handleActivity = () => {
+      lastActivity.current = Date.now();
+    };
+
+    window.addEventListener('mousemove', handleActivity);
+    window.addEventListener('keydown', handleActivity);
+    window.addEventListener('scroll', handleActivity);
+    window.addEventListener('touchstart', handleActivity);
+
     const initAuth = async () => {
       try {
-        // Only attempt to check session if we see ANY auth-related keys in storage
-        // This prevents the 401 network hit on page load for new visitors
         const hasPotentialSession = Object.keys(localStorage).some(k => 
           k.toLowerCase().includes('auth-token') || 
           k.toLowerCase().includes('insforge') ||
@@ -32,7 +40,6 @@ export const AuthProvider = ({ children }) => {
         if (data?.user) {
           setUser(data.user);
         } else if (error) {
-          // Silent failure if no session is available
           if (error.message?.includes('No refresh token') || error.errorCode === 'no_refresh_token') {
             setUser(null);
           } else if (error.message?.includes('CSRF') || error.statusCode === 403) {
@@ -41,7 +48,7 @@ export const AuthProvider = ({ children }) => {
           }
         }
       } catch (error) {
-        // Silently catch unexpected errors on init
+        // Silent catch
       } finally {
         setLoading(false);
       }
@@ -49,41 +56,43 @@ export const AuthProvider = ({ children }) => {
 
     initAuth();
 
-    // Periodically refresh session to avoid 401s/403s
+    // Session Heartbeat: Keep session alive during activity
     const refreshInterval = setInterval(async () => {
-      // ONLY refresh if we have a user in state
       if (!userRef.current) return;
 
-      // Also check for potential session keys in localStorage before attempting refresh
-      const hasPotentialSession = Object.keys(localStorage).some(k => 
-        k.toLowerCase().includes('auth-token') || 
-        k.toLowerCase().includes('insforge') ||
-        k.toLowerCase().includes('sb-')
-      );
-
-      if (!hasPotentialSession) {
-        // If no session keys are found, and we have a user in state, it might be stale.
-        // Clear user and stop refreshing.
-        setUser(null);
-        return;
-      }
+      // Only refresh if user was active in the last 15 minutes
+      // OR if we strictly need to refresh the token
+      const wasActiveRecently = (Date.now() - lastActivity.current) < 15 * 60 * 1000;
 
       try {
         const { data, error } = await insforge.auth.refreshSession();
         if (data?.user) {
           setUser(data.user);
         } else if (error) {
-          if (error.statusCode === 401 || error.statusCode === 403 || error.message?.includes('CSRF')) {
-            setUser(null);
-            await insforge.auth.signOut();
+          // If active, be VERY lenient with errors
+          if (wasActiveRecently) {
+            console.warn('Session refresh failed but user is active. Retrying later...', error.message);
+            return;
+          }
+
+          // If inactive and session is dead, clear user
+          if (error.message?.includes('No refresh token') || error.errorCode === 'no_refresh_token' || error.statusCode === 401) {
+             setUser(null);
+             await insforge.auth.signOut();
           }
         }
       } catch (err) {
-        console.error('Session refresh failed:', err);
+        console.error('Session heartbeat error:', err);
       }
-    }, 5 * 60 * 1000);
+    }, 4 * 60 * 1000); // Check every 4 minutes
 
-    return () => clearInterval(refreshInterval);
+    return () => {
+      window.removeEventListener('mousemove', handleActivity);
+      window.removeEventListener('keydown', handleActivity);
+      window.removeEventListener('scroll', handleActivity);
+      window.removeEventListener('touchstart', handleActivity);
+      clearInterval(refreshInterval);
+    };
   }, []);
 
   const login = async (email, password) => {

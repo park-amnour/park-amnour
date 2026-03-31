@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Save, RefreshCw, Play, Type, AlignLeft } from 'lucide-react';
 import { insforge } from '../../lib/insforge';
+import { HindiInput, HindiTextarea } from '../../components/HindiInput';
 
 const ManageHero = () => {
   const [heroData, setHeroData] = useState({
@@ -160,15 +161,13 @@ const ManageHero = () => {
                 className="w-full bg-[#F8FAF9] border border-black/5 rounded-xl p-4 text-text-dark focus:border-primary-green/50 outline-none transition-all"
               />
             </div>
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-text-dark/40 uppercase tracking-widest ml-1">Title (Hindi)</label>
-              <input 
-                type="text" 
-                value={heroData.titleHi}
-                onChange={(e) => setHeroData({...heroData, titleHi: e.target.value})}
-                className="w-full bg-[#F8FAF9] border border-black/5 rounded-xl p-4 text-text-dark font-body focus:border-primary-green/50 outline-none transition-all"
-              />
-            </div>
+            <HindiInput 
+              label="Title (Hindi)" 
+              value={heroData.titleHi} 
+              syncValue={heroData.titleEn}
+              onChange={(v) => setHeroData({...heroData, titleHi: v})}
+              placeholder="अमनौर पार्क..."
+            />
           </div>
         </div>
 
@@ -190,15 +189,14 @@ const ManageHero = () => {
                 className="w-full bg-[#F8FAF9] border border-black/5 rounded-xl p-4 text-text-dark focus:border-primary-green/50 outline-none transition-all resize-none"
               />
             </div>
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-text-dark/40 uppercase tracking-widest ml-1">Hindi Description</label>
-              <textarea 
-                rows={4}
-                value={heroData.descHi}
-                onChange={(e) => setHeroData({...heroData, descHi: e.target.value})}
-                className="w-full bg-[#F8FAF9] border border-black/5 rounded-xl p-4 text-text-dark font-body focus:border-primary-green/50 outline-none transition-all resize-none"
-              />
-            </div>
+            <HindiTextarea 
+              label="Hindi Description" 
+              value={heroData.descHi} 
+              syncValue={heroData.descEn}
+              onChange={(v) => setHeroData({...heroData, descHi: v})}
+              rows={4}
+              placeholder="विवरण यहाँ लिखें..."
+            />
           </div>
         </div>
 

@@ -47,7 +47,16 @@ const InfoStrip = () => {
       }
     };
 
+    const handleUpdate = (e) => {
+      const { type } = e.detail;
+      if (['pricing', 'reach'].includes(type)) {
+        fetchInfoData();
+      }
+    };
+
     fetchInfoData();
+    window.addEventListener('insforge:content_updated', handleUpdate);
+    return () => window.removeEventListener('insforge:content_updated', handleUpdate);
   }, []);
 
   const infoItems = [

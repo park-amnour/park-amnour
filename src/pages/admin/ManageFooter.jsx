@@ -3,6 +3,22 @@ import { motion } from 'framer-motion';
 import { Save, RefreshCw, MapPin, Phone, Mail, Facebook, Instagram, Youtube, Link as LinkIcon } from 'lucide-react';
 import { insforge } from '../../lib/insforge';
 
+const InputField = ({ icon: Icon, label, value, onChange, placeholder }) => (
+  <div className="bg-white p-5 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border border-black/5 shadow-sm space-y-2">
+    <label className="text-[10px] font-bold text-text-dark/40 uppercase tracking-widest flex items-center space-x-2 px-1 mb-1">
+      <Icon size={12} className="text-primary-green/60" />
+      <span>{label}</span>
+    </label>
+    <input 
+      type="text" 
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      className="w-full bg-[#F8FAF9] border border-black/5 rounded-xl py-2.5 md:py-3 px-4 text-sm text-text-dark font-medium focus:border-primary-green/50 outline-none transition-all shadow-sm"
+    />
+  </div>
+);
+
 const ManageFooter = () => {
   const [footer, setFooter] = useState({
     address: 'Amnour Harnarayan, Saran, Bihar 841401',
@@ -59,22 +75,6 @@ const ManageFooter = () => {
   const updateField = (key, value) => {
     setFooter(prev => ({ ...prev, [key]: value }));
   };
-
-  const InputField = ({ icon: Icon, label, value, onChange, placeholder }) => (
-    <div className="bg-white p-5 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border border-black/5 shadow-sm space-y-2">
-      <label className="text-[10px] font-bold text-text-dark/40 uppercase tracking-widest flex items-center space-x-2 px-1 mb-1">
-        <Icon size={12} className="text-primary-green/60" />
-        <span>{label}</span>
-      </label>
-      <input 
-        type="text" 
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full bg-[#F8FAF9] border border-black/5 rounded-xl py-2.5 md:py-3 px-4 text-sm text-text-dark font-medium focus:border-primary-green/50 outline-none transition-all shadow-sm"
-      />
-    </div>
-  );
 
   return (
     <div className="max-w-4xl space-y-6 md:space-y-8 pb-20">

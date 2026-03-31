@@ -65,15 +65,19 @@ export const SiteProvider = ({ children }) => {
         });
 
         // 3. One-Time Database Scrub for Legacy 404 Links
+        // This is commented out to prevent accidental deletion of valid Unsplash images.
+        // If needed, this should be moved to a manual action in the Admin Panel.
+        /*
         const scrubDatabase = async () => {
           try {
             await Promise.all([
               insforge.database.from('gallery').delete().like('url', '%unsplash.com%'),
               insforge.database.from('attractions').delete().like('image', '%unsplash.com%')
             ]);
-          } catch(e) { /* ignore */ }
+          } catch(e) { }
         };
         scrubDatabase();
+        */
 
         // 4. Aggressive Background Preloading Engine
         const preloadAssets = async () => {

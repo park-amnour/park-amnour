@@ -45,7 +45,16 @@ const Visit = () => {
         setIsLoading(false);
       }
     };
+    const handleUpdate = (e) => {
+      const { type } = e.detail;
+      if (['pricing', 'reach'].includes(type)) {
+        fetchVisitData();
+      }
+    };
+
     fetchVisitData();
+    window.addEventListener('insforge:content_updated', handleUpdate);
+    return () => window.removeEventListener('insforge:content_updated', handleUpdate);
   }, []);
 
   const timings = [

@@ -13,6 +13,7 @@ import {
   Upload
 } from 'lucide-react';
 import { insforge } from '../../lib/insforge';
+import { HindiInput, HindiTextarea } from '../../components/HindiInput';
 
 const ManageAttractions = () => {
   const [attractions, setAttractions] = useState([]);
@@ -159,7 +160,7 @@ const ManageAttractions = () => {
       namehi: "नया आकर्षण",
       descen: "Description in English",
       deschi: "हिंदी में विवरण",
-      image: "https://images.unsplash.com/photo-1500622388414-8555e04e6284?w=1200",
+      image: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1200",
     };
     setAttractions([...attractions, newAttr]);
     setExpandedId(newId);
@@ -283,18 +284,13 @@ const ManageAttractions = () => {
                           className="w-full bg-[#F8FAF9] border border-black/5 rounded-xl p-4 text-text-dark focus:border-primary-green/50 outline-none transition-all"
                         />
                       </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-text-dark/40 uppercase tracking-widest flex items-center space-x-2">
-                          <Type size={12} />
-                          <span>आकर्षण का नाम (हिंदी)</span>
-                        </label>
-                        <input 
-                          type="text" 
-                          value={attr.namehi}
-                          onChange={(e) => updateAttraction(attr.id, 'namehi', e.target.value)}
-                          className="w-full bg-[#F8FAF9] border border-black/5 rounded-xl p-4 text-text-dark font-body focus:border-primary-green/50 outline-none transition-all"
-                        />
-                      </div>
+                      <HindiInput 
+                        label="आकर्षण का नाम (हिंदी)" 
+                        value={attr.namehi} 
+                        syncValue={attr.nameen}
+                        onChange={(v) => updateAttraction(attr.id, 'namehi', v)}
+                        placeholder="नाम हिंदी में..."
+                      />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -310,18 +306,14 @@ const ManageAttractions = () => {
                           className="w-full bg-[#F8FAF9] border border-black/5 rounded-xl p-4 text-text-dark focus:border-primary-green/50 outline-none transition-all resize-none"
                         />
                       </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-text-dark/40 uppercase tracking-widest flex items-center space-x-2">
-                          <FileText size={12} />
-                          <span>विवरण (हिंदी)</span>
-                        </label>
-                        <textarea 
-                          rows={3}
-                          value={attr.deschi}
-                          onChange={(e) => updateAttraction(attr.id, 'deschi', e.target.value)}
-                          className="w-full bg-[#F8FAF9] border border-black/5 rounded-xl p-4 text-text-dark font-body focus:border-primary-green/50 outline-none transition-all resize-none"
-                        />
-                      </div>
+                      <HindiTextarea 
+                        label="विवरण (हिंदी)" 
+                        value={attr.deschi} 
+                        syncValue={attr.descen}
+                        onChange={(v) => updateAttraction(attr.id, 'deschi', v)}
+                        rows={3}
+                        placeholder="विवरण हिंदी में..."
+                      />
                     </div>
 
                     <div className="space-y-4">
