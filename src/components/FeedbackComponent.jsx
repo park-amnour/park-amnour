@@ -8,6 +8,7 @@ const FeedbackComponent = () => {
   const { lang } = useLanguage();
   const [feedbacks, setFeedbacks] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(3);
   
   // Form State
   const [name, setName] = useState('');
@@ -27,7 +28,7 @@ const FeedbackComponent = () => {
         .select('*')
         .eq('is_approved', true)
         .order('created_at', { ascending: false })
-        .limit(10);
+        .limit(50);
       
       if (error) throw error;
       if (data) setFeedbacks(data);
@@ -112,9 +113,10 @@ const FeedbackComponent = () => {
       </div>
 
       {feedbacks.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {feedbacks.map((fb) => (
-            <motion.div 
+        <div className="space-y-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {feedbacks.slice(0, visibleCount).map((fb) => (
+              <motion.div 
               key={fb.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -148,6 +150,18 @@ const FeedbackComponent = () => {
               </div>
             </motion.div>
           ))}
+          </div>
+          
+          {feedbacks.length > visibleCount && (
+            <div className="flex justify-center pt-2">
+              <button 
+                onClick={() => setVisibleCount(prev => prev + 3)}
+                className="bg-white border-2 border-primary-green text-primary-green hover:bg-primary-green hover:text-white px-8 py-3 rounded-full font-bold transition-all shadow-sm"
+              >
+                {lang === 'EN' ? 'Load More Reviews' : 'और समीक्षाएं दिखाएं'}
+              </button>
+            </div>
+          )}
         </div>
       ) : (
         <div className="text-center py-16 bg-white/50 rounded-[2rem] border border-black/5">
