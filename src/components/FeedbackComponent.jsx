@@ -169,12 +169,13 @@ const FeedbackComponent = () => {
               onClick={() => !isSubmitting && setIsModalOpen(false)}
               className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100]"
             />
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md bg-white rounded-[2rem] p-6 md:p-8 z-[110] shadow-2xl"
-            >
+            <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6 pointer-events-none">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                className="relative w-full max-w-md bg-white rounded-[2rem] p-6 md:p-8 shadow-2xl pointer-events-auto max-h-[90vh] md:max-h-[85vh] overflow-y-auto custom-scrollbar"
+              >
               <button 
                 onClick={() => setIsModalOpen(false)}
                 disabled={isSubmitting}
@@ -287,7 +288,8 @@ const FeedbackComponent = () => {
                   </form>
                 </>
               )}
-            </motion.div>
+              </motion.div>
+            </div>
           </>
         )}
       </AnimatePresence>
