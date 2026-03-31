@@ -91,7 +91,7 @@ const FeedbackComponent = () => {
   };
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <section id="feedback-section" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
       <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
         <div>
           <h2 className="text-3xl md:text-4xl font-heading font-bold text-primary-green mb-3">
@@ -152,16 +152,28 @@ const FeedbackComponent = () => {
           ))}
           </div>
           
-          {feedbacks.length > visibleCount && (
-            <div className="flex justify-center pt-2">
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+            {feedbacks.length > visibleCount && (
               <button 
                 onClick={() => setVisibleCount(prev => prev + 3)}
                 className="bg-white border-2 border-primary-green text-primary-green hover:bg-primary-green hover:text-white px-8 py-3 rounded-full font-bold transition-all shadow-sm"
               >
                 {lang === 'EN' ? 'Load More Reviews' : 'और समीक्षाएं दिखाएं'}
               </button>
-            </div>
-          )}
+            )}
+
+            {visibleCount > 3 && (
+              <button 
+                onClick={() => {
+                  setVisibleCount(3);
+                  document.getElementById('feedback-section')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="bg-transparent border-2 border-black/10 text-text-dark/70 hover:bg-black/5 hover:text-text-dark px-8 py-3 rounded-full font-bold transition-all"
+              >
+                {lang === 'EN' ? 'Show Less' : 'कम दिखाएं'}
+              </button>
+            )}
+          </div>
         </div>
       ) : (
         <div className="text-center py-16 bg-white/50 rounded-[2rem] border border-black/5">
