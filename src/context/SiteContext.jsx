@@ -37,8 +37,8 @@ export const SiteProvider = ({ children }) => {
           setStats(statsRes.data);
         }
 
-        // 2. Setup Real-time
-        await connectRealtime();
+        // 2. Setup Real-time (Non-blocking so Splash Screen goes away faster)
+        connectRealtime().catch(() => {});
         
         insforge.realtime.on('view_increment', (payload) => {
           if (payload.totalViews) {

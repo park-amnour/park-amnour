@@ -2,7 +2,11 @@ import { motion } from 'framer-motion';
 
 const SplashScreen = () => {
   return (
-    <div className="fixed inset-0 z-[9999] bg-[#1A2E22] flex flex-col items-center justify-center overflow-hidden">
+    <motion.div 
+      exit={{ opacity: 0, scale: 1.05 }}
+      transition={{ duration: 0.3 }}
+      className="fixed inset-0 z-[9999] bg-[#1A2E22] flex flex-col items-center justify-center overflow-hidden"
+    >
       {/* Background Ambient Effects */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent-gold/5 rounded-full blur-[100px] animate-pulse" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary-green/20 rounded-full blur-[100px] animate-pulse delay-700" />
@@ -67,7 +71,7 @@ const SplashScreen = () => {
           />
         </div>
       </motion.div>
-    </div>
+    </motion.div>
   );
 };
 

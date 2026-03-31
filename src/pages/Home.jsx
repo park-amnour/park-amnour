@@ -123,14 +123,21 @@ const Home = () => {
     return () => window.removeEventListener('insforge:content_updated', handleUpdate);
   }, []);
 
-  if (isLoading || isSiteLoading) {
-    return <SplashScreen />;
-  }
+  // Removed early return for animation transition
 
   return (
-    <div className="w-full bg-cream min-h-screen font-body text-text-dark">
-      
-      {/* Hero Section */}
+    <AnimatePresence mode="wait">
+      {(isLoading || isSiteLoading) ? (
+        <SplashScreen key="splash" />
+      ) : (
+        <motion.div 
+          key="content"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.4 }}
+          className="w-full bg-cream min-h-screen font-body text-text-dark"
+        >
+          {/* Hero Section */}
       <section className="relative h-[90vh] w-full flex flex-col justify-center items-center overflow-hidden">
         <div className="absolute inset-0 z-0 bg-primary-green">
           {heroData.videoUrl?.match(/\.(mp4|webm|ogg)$/i) || heroData.videoUrl?.includes('hero/videos') ? (
@@ -417,7 +424,9 @@ const Home = () => {
           </div>
         </div>
       </section>
-    </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 
