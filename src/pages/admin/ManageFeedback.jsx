@@ -45,6 +45,13 @@ const ManageFeedback = () => {
       
       // Tell public website to refresh the feedback list
       window.dispatchEvent(new CustomEvent('insforge:content_updated', { detail: { type: 'feedback' } }));
+      
+      try {
+        await insforge.realtime.connect();
+        await insforge.realtime.publish('site_content', 'content_updated', { type: 'feedback' });
+      } catch (e) {
+        console.warn('Real-time broadcast failed:', e);
+      }
     } catch (err) {
       console.error('Error updating feedback:', err);
       alert('Failed to update approval status.');
@@ -67,6 +74,13 @@ const ManageFeedback = () => {
       
       setFeedbacks(feedbacks.filter(fb => fb.id !== id));
       window.dispatchEvent(new CustomEvent('insforge:content_updated', { detail: { type: 'feedback' } }));
+      
+      try {
+        await insforge.realtime.connect();
+        await insforge.realtime.publish('site_content', 'content_updated', { type: 'feedback' });
+      } catch (e) {
+        console.warn('Real-time broadcast failed:', e);
+      }
     } catch (err) {
       console.error('Error deleting feedback:', err);
       alert('Failed to delete feedback.');

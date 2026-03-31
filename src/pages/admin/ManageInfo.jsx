@@ -84,6 +84,14 @@ const ManageInfo = () => {
         detail: { type: 'reach' } 
       }));
 
+      // Broadcast real-time update
+      try {
+        await insforge.realtime.connect();
+        await insforge.realtime.publish('site_content', 'content_updated', { type: 'reach' });
+      } catch (e) {
+        console.warn('Real-time broadcast failed:', e);
+      }
+
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
     } catch (err) {

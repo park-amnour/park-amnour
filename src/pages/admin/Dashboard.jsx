@@ -19,38 +19,70 @@ import { useState, useEffect } from 'react';
 
 const Dashboard = () => {
   const { stats } = useSite();
-  const [counts, setCounts] = useState({ attractions: 0, gallery: 0 });
+  const [counts, setCounts] = useState({ attractions: 0, gallery: 0, pendingFeedback: 0 });
+  const [activities, setActivities] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCounts = async () => {
+    const fetchData = async () => {
       try {
-        const [{ count: attrCount }, { count: galCount }] = await Promise.all([
+        const [
+          { count: attrCount }, 
+          { count: galCount },
+          { count: feedbackCount },
+          { data: recentFeedback },
+          { data: recentGallery }
+        ] = await Promise.all([
           insforge.database.from('attractions').select('*', { count: 'exact', head: true }),
-          insforge.database.from('gallery').select('*', { count: 'exact', head: true })
+          insforge.database.from('gallery').select('*', { count: 'exact', head: true }),
+          insforge.database.from('feedback').select('*', { count: 'exact', head: true }).eq('is_approved', false),
+          insforge.database.from('feedback').select('name, created_at').order('created_at', { ascending: false }).limit(3),
+          insforge.database.from('gallery').select('created_at').order('created_at', { ascending: false }).limit(2)
         ]);
+
         setCounts({
           attractions: attrCount || 0,
-          gallery: galCount || 0
+          gallery: galCount || 0,
+          pendingFeedback: feedbackCount || 0
         });
+
+        // Mix activities
+        const activityLog = [];
+        if (recentFeedback) {
+          recentFeedback.forEach(f => activityLog.push({
+            title: `New feedback from ${f.name}`,
+            time: new Date(f.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            user: 'Visitor',
+            rawTime: new Date(f.created_at)
+          }));
+        }
+        if (recentGallery) {
+          recentGallery.forEach(g => activityLog.push({
+            title: `Gallery image uploaded`,
+            time: new Date(g.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            user: 'System',
+            rawTime: new Date(g.created_at)
+          }));
+        }
+
+        setActivities(activityLog.sort((a,b) => b.rawTime - a.rawTime).slice(0, 5));
       } catch (err) {
-        console.warn('Failed to fetch dashboard counts:', err);
+        console.warn('Failed to fetch dashboard data:', err);
+      } finally {
+        setIsLoading(false);
       }
     };
-    fetchCounts();
+    fetchData();
   }, []);
 
   const displayStats = [
-    { name: 'Total Visitors Today', value: stats?.totalViews > 0 ? `${stats.totalViews.toLocaleString()}+` : '1,240+', icon: Users, color: 'bg-primary-green', trend: 'Live' },
-    { name: 'Page Views', value: stats?.totalViews > 0 ? `${Math.floor(stats.totalViews * 1.5).toLocaleString()}` : '1.8k', icon: Eye, color: 'bg-blue-500', trend: 'Live' },
+    { name: 'Total Visitors', value: stats?.totalViews > 0 ? stats.totalViews.toLocaleString() : 'Loading...', icon: Users, color: 'bg-primary-green', trend: 'Live' },
+    { name: 'Pending Approvals', value: counts.pendingFeedback.toString(), icon: Eye, color: 'bg-blue-500', trend: 'Review' },
     { name: 'Active Attractions', value: counts.attractions.toString(), icon: MapPin, color: 'bg-accent-gold', trend: 'Live' },
     { name: 'Gallery Items', value: counts.gallery.toString(), icon: ImageIcon, color: 'bg-purple-500', trend: 'Live' },
   ];
 
-  const recentActivities = [
-    { title: 'Hero Section updated', time: 'Recently', user: 'Admin' },
-    { title: 'Gallery images synchronized', time: 'Recently', user: 'System' },
-    { title: 'Site SEO parameters updated', time: 'Recently', user: 'Admin' },
-  ];
+  // activities state is now used below
 
   return (
     <div className="space-y-6 md:space-y-10 pb-10">
@@ -190,7 +222,7 @@ const Dashboard = () => {
         <div className="bg-white rounded-[1.5rem] md:rounded-[2.5rem] p-6 md:p-8 border border-black/5 shadow-sm h-fit">
           <h3 className="text-lg md:text-xl font-heading font-bold text-text-dark mb-6">System Log</h3>
           <div className="space-y-4 md:space-y-6">
-            {recentActivities.map((activity, idx) => (
+            {activities.length > 0 ? activities.map((activity, idx) => (
               <div key={idx} className="flex items-start space-x-3 md:space-x-4">
                 <div className="w-1 h-8 md:h-10 bg-accent-gold rounded-full shrink-0" />
                 <div>
@@ -200,7 +232,9 @@ const Dashboard = () => {
                   </p>
                 </div>
               </div>
-            ))}
+            )) : (
+              <p className="text-xs text-text-dark/40 italic">No recent activities found.</p>
+            )}
           </div>
           <button className="w-full mt-8 md:mt-10 py-3 md:py-4 border border-black/5 hover:border-primary-green/20 rounded-xl md:rounded-2xl text-primary-green font-bold text-[11px] md:text-sm transition-all bg-[#F8FAF9]/50">
             View Historical Logs

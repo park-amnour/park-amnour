@@ -58,6 +58,13 @@ const ManageSEO = () => {
       await insforge.database
         .from('site_settings')
         .upsert({ key: 'seo', data: newSeo });
+
+      try {
+        await insforge.realtime.connect();
+        await insforge.realtime.publish('site_content', 'content_updated', { type: 'seo' });
+      } catch (e) {
+        console.warn('Real-time broadcast failed:', e);
+      }
         
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
@@ -78,6 +85,13 @@ const ManageSEO = () => {
       
       if (error) throw error;
       window.dispatchEvent(new CustomEvent('insforge:content_updated', { detail: { type: 'seo' } }));
+      
+      try {
+        await insforge.realtime.connect();
+        await insforge.realtime.publish('site_content', 'content_updated', { type: 'seo' });
+      } catch (e) {
+        console.warn('Real-time broadcast failed:', e);
+      }
       
       document.title = seo.siteTitle;
       setShowSuccess(true);

@@ -136,10 +136,18 @@ const ManagePricing = () => {
       
       if (error) throw error;
       
-      // Dispatch event for real-time updates
+      // Dispatch event for local state refresh
       window.dispatchEvent(new CustomEvent('insforge:content_updated', { 
         detail: { type: 'pricing' } 
       }));
+
+      // Broadcast real-time update to all connected users
+      try {
+        await insforge.realtime.connect();
+        await insforge.realtime.publish('site_content', 'content_updated', { type: 'pricing' });
+      } catch (e) {
+        console.warn('Real-time broadcast failed:', e);
+      }
 
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
