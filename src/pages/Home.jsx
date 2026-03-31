@@ -24,6 +24,7 @@ import { useSite } from '../context/SiteContext';
 import InfoStrip from '../components/InfoStrip';
 import AttractionCard from '../components/AttractionCard';
 import Skeleton, { CardSkeleton } from '../components/Skeleton';
+import FeedbackComponent from '../components/FeedbackComponent';
 
 const getIcon = (id) => {
   switch(id) {
@@ -256,7 +257,7 @@ const Home = () => {
               )}
               <div className="text-2xl mb-4">🚣</div>
               <h3 className="text-xl font-bold mb-1">{lang === 'EN' ? 'Boating' : 'नौका विहार'}</h3>
-              <p className="text-text-dark/60 text-xs mb-6">20 mins ride</p>
+              <p className="text-text-dark/60 text-xs mb-6">{pricing.boatingDuration || 20} {lang === 'EN' ? 'mins ride' : 'मिनट की राइड'}</p>
               
               <div className="flex flex-col space-y-3">
                 <div className="flex justify-between items-center border-b border-black/5 pb-2">
@@ -316,8 +317,10 @@ const Home = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               <RuleItem 
                 icon="📸" 
-                title={lang === 'EN' ? 'Couple Privacy' : 'कपल्स की प्राइवेसी'} 
-                desc={lang === 'EN' ? 'Photography/Videography of couples is strictly prohibited. We respect your privacy.' : 'कपल्स का फोटो या वीडियो बनाना सख्त मना है। हम आपकी गोपनीयता का सम्मान करते हैं।'} 
+                title={lang === 'EN' ? 'Strictly Prohibited' : 'सख्त मनाही व जुर्माना'} 
+                desc={lang === 'EN' 
+                  ? 'Taking photos or videos of couples is strictly prohibited. Violators will face a ₹500 fine and strict action under CCTV surveillance.' 
+                  : 'कपल्स की फोटो या वीडियो खींचना सख्त मना है। पकड़े जाने पर डिवाइस जब्त कर ₹500 का जुर्माना और सख्त कार्रवाई की जाएगी। पूरा पार्क CCTV की निगरानी में है।'} 
               />
               <RuleItem 
                 icon="🌸" 
@@ -397,6 +400,9 @@ const Home = () => {
           )}
         </div>
       </section>
+
+      {/* Visitor Feedback */}
+      <FeedbackComponent />
 
       {/* How to Reach */}
       <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">

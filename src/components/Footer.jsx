@@ -105,12 +105,24 @@ const Footer = () => {
               <ul className="space-y-3 text-xs md:text-sm font-body text-[#A0B0A6]">
                 <li className="flex items-start space-x-2">
                   <MapPin className="text-accent-gold shrink-0 mt-0.5" size={14} />
-                  <span>{data.address}</span>
+                  <span className="leading-relaxed">{data.address}</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Clock className="text-accent-gold shrink-0" size={14} />
                   <span>{data.timingsEn}</span>
                 </li>
+                {data.phone && (
+                  <li className="flex items-center space-x-2">
+                    <Phone className="text-accent-gold shrink-0" size={14} />
+                    <a href={`tel:${data.phone.replace(/[^0-9+]/g, '')}`} className="hover:text-white transition-colors">{data.phone}</a>
+                  </li>
+                )}
+                {data.email && (
+                  <li className="flex items-center space-x-2">
+                    <Mail className="text-accent-gold shrink-0" size={14} />
+                    <a href={`mailto:${data.email}`} className="hover:text-white transition-colors">{data.email}</a>
+                  </li>
+                )}
               </ul>
               <a 
                 href={data.mapUrl} 

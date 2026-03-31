@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { IndianRupee, Save, RefreshCw, Sun, Moon, Anchor, Bike, PartyPopper, Calendar } from 'lucide-react';
+import { IndianRupee, Save, RefreshCw, Sun, Moon, Anchor, Bike, PartyPopper, Calendar, Clock } from 'lucide-react';
 import { insforge } from '../../lib/insforge';
 
 const PriceCard = ({ icon: Icon, title, value, onChange, color, isFree, onToggleFree }) => (
@@ -36,12 +36,63 @@ const PriceCard = ({ icon: Icon, title, value, onChange, color, isFree, onToggle
   </div>
 );
 
+const DualPriceCard = ({ icon: Icon, title, label1, label2, value1, value2, onChange1, onChange2, color, isFree, onToggleFree }) => (
+  <div className="bg-white p-5 md:p-6 rounded-[1.5rem] md:rounded-[2rem] border border-black/5 shadow-sm space-y-4 relative overflow-hidden flex flex-col justify-between">
+    {isFree && (
+      <div className="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-bold px-4 py-1 -mr-4 mt-2 rotate-45 shadow-sm z-10">
+        FREE
+      </div>
+    )}
+    <div className="flex items-center justify-between relative z-10">
+      <div className="flex items-center space-x-3">
+        <div className={`${color} p-2 rounded-lg text-white shadow-sm`}>
+          <Icon size={16} />
+        </div>
+        <h3 className="font-bold text-sm text-text-dark">{title}</h3>
+      </div>
+      <button 
+        onClick={() => onToggleFree(!isFree)}
+        className={`text-[10px] px-2 py-1 rounded-md font-bold transition-all ${isFree ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-400'}`}
+      >
+        {isFree ? 'MARKED FREE' : 'SET FREE'}
+      </button>
+    </div>
+    <div className={`grid grid-cols-2 gap-3 transition-opacity relative z-10 ${isFree ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
+      <div className="space-y-1">
+        <label className="text-[10px] font-bold text-text-dark/50 uppercase">{label1}</label>
+        <div className="relative">
+          <IndianRupee size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-dark/40" />
+          <input 
+            type="number" 
+            value={value1}
+            onChange={(e) => onChange1(e.target.value)}
+            className="w-full bg-[#F8FAF9] border border-black/5 rounded-xl py-2 pl-8 pr-3 text-text-dark font-bold focus:border-primary-green/50 outline-none transition-all text-sm"
+          />
+        </div>
+      </div>
+      <div className="space-y-1">
+        <label className="text-[10px] font-bold text-text-dark/50 uppercase">{label2}</label>
+        <div className="relative">
+          <IndianRupee size={12} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-dark/40" />
+          <input 
+            type="number" 
+            value={value2}
+            onChange={(e) => onChange2(e.target.value)}
+            className="w-full bg-[#F8FAF9] border border-black/5 rounded-xl py-2 pl-8 pr-3 text-text-dark font-bold focus:border-primary-green/50 outline-none transition-all text-sm"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 const ManagePricing = () => {
   const [pricing, setPricing] = useState({
     dayEntry: 10,
     eveningEntry: 25,
     boating2p: 50,
     boating4p: 100,
+    boatingDuration: 20,
     parkingBike: 10,
     parkingCycle: 0,
     entryFree: false,
@@ -131,27 +182,35 @@ const ManagePricing = () => {
 
       {/* Pricing Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-        <PriceCard 
+        <DualPriceCard 
           icon={Sun} 
-          title="Entry Fees (Day/Evening)" 
-          value={pricing.dayEntry} 
-          onChange={(v) => updatePrice('dayEntry', v)}
+          title="Entry Fees" 
+          label1="Day"
+          label2="Evening"
+          value1={pricing.dayEntry} 
+          value2={pricing.eveningEntry} 
+          onChange1={(v) => updatePrice('dayEntry', v)}
+          onChange2={(v) => updatePrice('eveningEntry', v)}
           isFree={pricing.entryFree}
           onToggleFree={(v) => updatePrice('entryFree', v)}
           color="bg-orange-400"
         />
-        <PriceCard 
+        <DualPriceCard 
           icon={Anchor} 
-          title="Boating Fees (2P/4P)" 
-          value={pricing.boating2p} 
-          onChange={(v) => updatePrice('boating2p', v)}
+          title="Boating Fees" 
+          label1="2 Persons"
+          label2="4 Persons"
+          value1={pricing.boating2p} 
+          value2={pricing.boating4p} 
+          onChange1={(v) => updatePrice('boating2p', v)}
+          onChange2={(v) => updatePrice('boating4p', v)}
           isFree={pricing.boatingFree}
           onToggleFree={(v) => updatePrice('boatingFree', v)}
           color="bg-blue-500"
         />
         <PriceCard 
           icon={Bike} 
-          title="Parking Fees" 
+          title="Parking (Bike)" 
           value={pricing.parkingBike} 
           onChange={(v) => updatePrice('parkingBike', v)}
           isFree={pricing.parkingFree}
@@ -159,6 +218,26 @@ const ManagePricing = () => {
           color="bg-purple-500"
         />
       </div>
+
+      <section className="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 shadow-sm border border-black/5 space-y-4">
+        <div className="flex items-center space-x-3 text-water-blue mb-2">
+          <Anchor size={24} />
+          <h3 className="font-bold text-lg text-text-dark">Boating Settings</h3>
+        </div>
+        <div className="max-w-xs space-y-2">
+          <label className="text-[10px] font-bold text-text-dark/40 uppercase tracking-widest px-1">Boating Duration (Mins)</label>
+          <div className="relative">
+            <Clock size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-text-dark/40" />
+            <input 
+              type="number" 
+              value={pricing.boatingDuration}
+              onChange={(e) => updatePrice('boatingDuration', e.target.value)}
+              placeholder="e.g. 20"
+              className="w-full bg-[#F8FAF9] border border-black/5 rounded-xl py-3 pl-10 pr-4 text-sm text-text-dark font-medium focus:border-primary-green/50 outline-none transition-all"
+            />
+          </div>
+        </div>
+      </section>
 
       {/* Festival Details */}
       <section className="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 shadow-sm border border-black/5 space-y-6">

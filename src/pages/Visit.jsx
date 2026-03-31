@@ -86,7 +86,7 @@ const Visit = () => {
     { field: lang === 'EN' ? 'Boat Type' : 'नाव का प्रकार', value: lang === 'EN' ? 'Paddle Boat' : 'पडल बोट' },
     { field: lang === 'EN' ? 'Price (2 Persons)' : 'कीमत (2 व्यक्ति)', value: pricing.boatingFree ? <span className="text-emerald-500 font-bold">FREE</span> : `₹${pricing.boating2p}` },
     { field: lang === 'EN' ? 'Price (4 Persons)' : 'कीमत (4 व्यक्ति)', value: pricing.boatingFree ? <span className="text-emerald-500 font-bold">FREE</span> : `₹${pricing.boating4p}` },
-    { field: lang === 'EN' ? 'Duration' : 'अवधि', value: '20 Mins' },
+    { field: lang === 'EN' ? 'Duration' : 'अवधि', value: `${pricing.boatingDuration || 20} Mins` },
   ];
 
   const parkingFees = [
@@ -96,23 +96,23 @@ const Visit = () => {
   ];
 
   const rules = lang === 'EN' ? [
-    'Photography/Videography of couples is strictly prohibited.',
-    'Couple privacy and safety is our top priority.',
+    'Taking photos or videos of couples is strictly prohibited. Violators will face a ₹500 fine and legal action.',
+    'Couple privacy and safety is our absolute priority.',
     'Plucking flowers or damaging plants is forbidden (Fine: ₹500).',
     'Bathing in the Amrit Sarovar is strictly prohibited (Fine: ₹500).',
-    'Smoking and intoxicants are strictly prohibited.',
-    'The park is under 24/7 CCTV surveillance.',
+    'Smoking, alcohol, and intoxicants are strictly prohibited.',
+    'The entire park is under 24/7 CCTV surveillance.',
     'Adult supervision for children is mandatory.',
-    'Do not throw plastic waste in the park.'
+    'Do not throw plastic waste in the park. Keep it clean.'
   ] : [
-    'कपल्स की फोटोग्राफी या वीडियोग्राफी करना सख्त मना है।',
+    'कपल्स की बिना अनुमति फोटो या वीडियो खींचना सख्त मना है। पकड़े जाने पर डिवाइस जब्त कर ₹500 जुर्माना और सख्त कानूनी कार्रवाई की जाएगी।',
     'कपल्स की प्राइवेसी और सुरक्षा हमारी पहली प्राथमिकता है।',
-    'फूल तोड़ना या पौधों को नुकसान पहुँचाना मना है (जुर्माना: ₹500)।',
-    'अमृत सरोवर में नहाना सख्त मना है (जुर्माना: ₹500)।',
-    'धूम्रपान और नशीले पदार्थों का सेवन सख्त मना है।',
-    'पूरा पार्क 24/7 CCTV कैमरों की निगरानी में है।',
+    'किसी भी प्रकार का फूल तोड़ना या पौधों को नुकसान पहुँचाना मना है (जुर्माना: ₹500)।',
+    'पोखरा (अमृत सरोवर) में नहाना सख्त मना है (जुर्माना: ₹500)।',
+    'धूम्रपान और नशीले पदार्थों का सेवन पूरी तरह से मना है।',
+    'पूरा पार्क 24/7 CCTV कैमरों की कड़ी निगरानी में है।',
     'बच्चों के साथ बड़ों का होना अनिवार्य है।',
-    'पार्क में प्लास्टिक कचरा न फेंकें।'
+    'पार्क में प्लास्टिक कचरा न फेंकें। स्वच्छता बनाए रखें।'
   ];
 
   return (

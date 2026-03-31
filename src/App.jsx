@@ -23,6 +23,7 @@ import ManagePricing from './pages/admin/ManagePricing';
 import ManageFooter from './pages/admin/ManageFooter';
 import ManageInfo from './pages/admin/ManageInfo';
 import ManageSEO from './pages/admin/ManageSEO';
+import ManageFeedback from './pages/admin/ManageFeedback';
 import Settings from './pages/admin/Settings';
 import PageTracker from './components/PageTracker';
 import { SiteProvider } from './context/SiteContext';
@@ -63,6 +64,7 @@ const router = createBrowserRouter([
           { path: "manage-footer", element: <ManageFooter /> },
           { path: "manage-info", element: <ManageInfo /> },
           { path: "manage-seo", element: <ManageSEO /> },
+          { path: "manage-feedback", element: <ManageFeedback /> },
           { path: "settings", element: <Settings /> },
         ],
       },

@@ -15,7 +15,8 @@ import {
   LayoutGrid,
   Info,
   Phone,
-  TrendingUp
+  TrendingUp,
+  MessageSquare
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -34,6 +35,7 @@ const AdminLayout = () => {
     { name: 'Footer & Links', path: '/admin/manage-footer', icon: Phone },
     { name: 'Site Info', path: '/admin/manage-info', icon: Info },
     { name: 'SEO Settings', path: '/admin/manage-seo', icon: Search },
+    { name: 'User Feedback', path: '/admin/manage-feedback', icon: MessageSquare },
     { name: 'Settings', path: '/admin/settings', icon: Settings },
   ];
 
